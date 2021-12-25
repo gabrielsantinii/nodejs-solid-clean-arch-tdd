@@ -4,7 +4,7 @@
     "module": "commonjs",  
     "esModuleInterop": true, 
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "src/",
+    "baseUrl": "./",
     "strict": true,
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   }
