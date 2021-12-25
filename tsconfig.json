@@ -4,8 +4,14 @@
     "module": "commonjs",  
     "esModuleInterop": true, 
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./",
     "strict": true,
-    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "rootDirs": ["src", "tests"],
+    "baseUrl": "src",
+    "paths": {
+      "@/tests/*": ["../tests/*"],
+      "@/*": ["*"]
+    }
   }
 }
