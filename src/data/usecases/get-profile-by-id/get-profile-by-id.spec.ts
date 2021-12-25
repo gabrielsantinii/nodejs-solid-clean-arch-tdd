@@ -1,5 +1,5 @@
 import { ProfileMongoRepository } from "@/infra/db";
-import { GetProfileByIdRepository } from "../protocols/db";
+import { GetProfileByIdRepository } from "@/data/protocols/db";
 import { DbGetProfileById } from "./get-profile-by-id";
 
 type SutType = {
