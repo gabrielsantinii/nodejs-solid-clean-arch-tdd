@@ -3,4 +3,4 @@ export type LikeModel = {
     likedBy: string;
     postId: string;
     likedAt: Date;
-}
+};

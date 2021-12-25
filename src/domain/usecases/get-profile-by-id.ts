@@ -1,13 +1,13 @@
 import { ProfileModel } from "../models";
 
 export interface GetProfileById {
-  perform: (params: GetProfileById.Params) => Promise<GetProfileById.Result>;
+    perform: (params: GetProfileById.Params) => Promise<GetProfileById.Result>;
 }
 
 export namespace GetProfileById {
-  export type Params = {
-    profileId: string;
-  };
+    export type Params = {
+        profileId: string;
+    };
 
-  export type Result = ProfileModel | undefined;
+    export type Result = ProfileModel | undefined;
 }
