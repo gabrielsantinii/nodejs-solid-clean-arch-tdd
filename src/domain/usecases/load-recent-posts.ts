@@ -5,6 +5,6 @@ export interface LoadRecentPosts {
 }
 
 export namespace LoadRecentPosts {
-    export type Params = { authorsIds: string[] };
+    export type Params = { authorsIds: string[]; limit: number };
     export type Result = PostModel[];
 }

@@ -5,6 +5,6 @@ export class DbLoadRecentPosts implements LoadRecentPosts {
     constructor(private readonly loadRecentPostsRepository: LoadRecentPostsRepository) {}
 
     async perform(params: LoadRecentPosts.Params): Promise<LoadRecentPosts.Result> {
-        return this.loadRecentPostsRepository.loadRecentPosts({ authorsIds: params.authorsIds });
+        return this.loadRecentPostsRepository.loadWithLimit({ authorsIds: params.authorsIds, limit: params.limit });
     }
 }

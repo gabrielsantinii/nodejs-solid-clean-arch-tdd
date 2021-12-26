@@ -18,7 +18,8 @@ const makeSut = (): SutType => {
 describe("load-recent-posts.spec usecase", () => {
     it("should return a list of posts.", async () => {
         const { sut } = makeSut();
-        const recentPosts = await sut.perform({ authorsIds: ["any_id", "any_sec_id"] });
+        const recentPosts = await sut.perform({ authorsIds: ["any_id", "any_sec_id"], limit: 20 });
         expect(Array.isArray(recentPosts)).toBeTruthy();
+        expect(recentPosts.length).toBeLessThanOrEqual(20);
     });
 });

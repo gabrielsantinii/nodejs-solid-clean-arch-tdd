@@ -14,7 +14,7 @@ const makeSut = (): SutType => {
 };
 
 describe("load-following-authors-list.spec usecase", () => {
-    it("should return a list with following authors.", async () => {
+    it("should return a list with id of following authors.", async () => {
         const { sut } = makeSut();
         const followingAuthors = await sut.perform({ followedBy: "any_profile_id" });
         expect(Array.isArray(followingAuthors)).toBe(true);
