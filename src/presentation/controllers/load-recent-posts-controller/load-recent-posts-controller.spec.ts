@@ -36,13 +36,23 @@ class LoadRecentPostsController implements Controller {
     }
 }
 
+type SutType = {
+    loadFollowingAuthorsListSpy: LoadFollowingAuthorsList;
+    loadRecentPostsSpy: LoadRecentPosts;
+    sut: LoadRecentPostsController;
+};
 
+const makeSut = (): SutType => {
+    const loadFollowingAuthorsListSpy = new LoadFollowingAuthorsListSpy();
+    const loadRecentPostsSpy = new LoadRecentPostsSpy();
+    const sut = new LoadRecentPostsController(loadFollowingAuthorsListSpy, loadRecentPostsSpy);
+
+    return { loadFollowingAuthorsListSpy, loadRecentPostsSpy, sut };
+};
 
 describe("load-recent-posts-controller.spec usecase", () => {
     it("should return a successful status response.", async () => {
-        const loadFollowingAuthorsListSpy = new LoadFollowingAuthorsListSpy();
-        const loadRecentPostsSpy = new LoadRecentPostsSpy();
-        const sut = new LoadRecentPostsController(loadFollowingAuthorsListSpy, loadRecentPostsSpy);
+        const { sut } = makeSut()
         const recentPosts = await sut.handle({ followedBy: "any_profile_id" });
         expect(recentPosts.statusCode).toBe(200);
     });
