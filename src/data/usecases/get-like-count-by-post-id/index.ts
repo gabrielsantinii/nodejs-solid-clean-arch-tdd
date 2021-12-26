@@ -1,1 +1,0 @@
-export * from './get-like-count-by-post-id'

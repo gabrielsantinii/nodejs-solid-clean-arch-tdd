@@ -1,11 +1,11 @@
-import { GetLikeCountByPostIdRepository, GetLikeCountByProfileIdRepository } from "@/data/protocols/db";
+import { GetPostLikeCountRepository, GetProfileLikeCountRepository } from "@/data/protocols/db";
 
-export class LikeMongoRepository implements GetLikeCountByPostIdRepository, GetLikeCountByProfileIdRepository {
-    async countLikeByPostId(params: GetLikeCountByPostIdRepository.Params): Promise<GetLikeCountByPostIdRepository.Result> {
+export class LikeMongoRepository implements GetPostLikeCountRepository, GetProfileLikeCountRepository {
+    async countLikeByPostId(params: GetPostLikeCountRepository.Params): Promise<GetPostLikeCountRepository.Result> {
         return 0;
     }
 
-    async countByProfileId(params: GetLikeCountByProfileIdRepository.Params): Promise<GetLikeCountByProfileIdRepository.Result> {
+    async countByProfileId(params: GetProfileLikeCountRepository.Params): Promise<GetProfileLikeCountRepository.Result> {
         return 0;
     }
 }

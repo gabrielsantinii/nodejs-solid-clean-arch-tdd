@@ -1,1 +1,1 @@
-export * from './get-like-count-by-profile-id'
+export * from './get-profile-like-count'
