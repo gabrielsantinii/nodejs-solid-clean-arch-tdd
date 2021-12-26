@@ -1,7 +1,7 @@
 import { LoadFollowingAuthorsList, LoadRecentPosts } from "@/domain/usecases";
 import { noContent, ok } from "@/presentation/helpers";
-import { Controller, HttpResponse } from "@/presentation/protocols";
 import { mockPostModel } from "@/tests/domain/mocks";
+import { LoadRecentPostsController } from "./load-recent-posts-controller";
 
 class LoadFollowingAuthorsListSpy implements LoadFollowingAuthorsList {
     followedBy = "";
@@ -24,17 +24,7 @@ class LoadRecentPostsSpy implements LoadRecentPosts {
     }
 }
 
-class LoadRecentPostsController implements Controller {
-    constructor(private readonly loadFollowingAuthorsList: LoadFollowingAuthorsList, private readonly loadRecentPosts: LoadRecentPosts) {}
-
-    async handle(request: { followedBy: string }): Promise<HttpResponse> {
-        const followingAuthorsList = await this.loadFollowingAuthorsList.perform({ followedBy: request.followedBy });
-        const recentPosts = await this.loadRecentPosts.perform({ authorsIds: followingAuthorsList, limit: 20 });
-        if (!recentPosts.length) return noContent();
-
-        return ok(recentPosts);
-    }
-}
+const mockRequest = (): LoadRecentPostsController.Request => ({ followedBy: "any_profile_id" });
 
 type SutType = {
     loadFollowingAuthorsListSpy: LoadFollowingAuthorsListSpy;
@@ -53,7 +43,14 @@ const makeSut = (): SutType => {
 describe("load-recent-posts-controller.spec usecase", () => {
     it("should return a successful status response.", async () => {
         const { sut, loadRecentPostsSpy } = makeSut();
-        const httpResponse = await sut.handle({ followedBy: "any_profile_id" });
+        const httpResponse = await sut.handle(mockRequest());
         expect(httpResponse).toEqual(ok(loadRecentPostsSpy.result));
+    });
+
+    it("should return noContent when load-recent-posts are empty array", async () => {
+        const { sut, loadRecentPostsSpy } = makeSut();
+        loadRecentPostsSpy.result = [];
+        const httpResponse = await sut.handle(mockRequest());
+        expect(httpResponse).toEqual(noContent());
     });
 });
