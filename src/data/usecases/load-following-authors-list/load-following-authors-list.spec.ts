@@ -1,9 +1,6 @@
-import { ProfileModel } from "@/domain/models";
-import { mockProfileModel } from "@/tests/domain/mocks/mock-profile";
-
 class LoadFollowingAuthorsList {
-    async perform({ followedBy }: { followedBy: string }): Promise<ProfileModel[]> {
-        return [{ ...mockProfileModel() }];
+    async perform({ followedBy }: { followedBy: string }): Promise<string[]> {
+        return ["any_id", "any_name"];
     }
 }
 
@@ -12,6 +9,6 @@ describe("load-following-authors-list.spec usecase", () => {
         const sut = new LoadFollowingAuthorsList();
         const followingAuthors = await sut.perform({ followedBy: "any_profile_id" });
         expect(Array.isArray(followingAuthors)).toBe(true);
-        expect(followingAuthors.some((a) => !!a.id)).toBe(true);
+        expect(followingAuthors.some((f) => typeof f !== "string")).toBe(false);
     });
 });
