@@ -1,4 +1,4 @@
-import { ProfileModel } from "../models";
+import { ProfileModel } from "@/domain/models";
 
 export interface LoadProfile {
     perform: (params: LoadProfile.Params) => Promise<LoadProfile.Result>;

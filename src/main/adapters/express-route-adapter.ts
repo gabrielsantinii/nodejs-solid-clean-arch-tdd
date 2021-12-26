@@ -1,6 +1,6 @@
 import { Controller } from "@/presentation/protocols";
 import express from "express";
-import { isErrorStatus, safeSpread } from "../helpers";
+import { isErrorStatus, safeSpread } from "@/main/helpers";
 
 export const adaptRoute = (controller: Controller) => {
     return async (req: express.Request, res: express.Response) => {

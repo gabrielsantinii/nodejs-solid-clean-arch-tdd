@@ -1,4 +1,4 @@
-import { PostModel } from "../models";
+import { PostModel } from "@/domain/models";
 
 export interface LoadRecentPosts {
     perform: (params: LoadRecentPosts.Params) => Promise<LoadRecentPosts.Result>;
