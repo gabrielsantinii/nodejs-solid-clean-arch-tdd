@@ -1,15 +1,23 @@
+import { LoadRecentPostsRepository } from "@/data/protocols/db";
 import { LoadRecentPosts } from "@/domain/usecases";
-import { mockPostModel } from "@/tests/domain/mocks";
+import { PostMongoRepository } from "@/infra/db";
+import { DbLoadRecentPosts } from "./load-recent-posts";
 
-class DbLoadRecentPosts implements LoadRecentPosts {
-    async perform(params: LoadRecentPosts.Params): Promise<LoadRecentPosts.Result> {
-        return [{ ...mockPostModel(), ...mockPostModel() }];
-    }
-}
+type SutType = {
+    sut: LoadRecentPosts;
+    loadRecentPostsRepository: LoadRecentPostsRepository;
+};
+
+const makeSut = (): SutType => {
+    const loadRecentPostsRepository = new PostMongoRepository();
+    const sut = new DbLoadRecentPosts(loadRecentPostsRepository);
+
+    return { sut, loadRecentPostsRepository };
+};
 
 describe("load-recent-posts.spec usecase", () => {
     it("should return a list of posts.", async () => {
-        const sut = new DbLoadRecentPosts();
+        const { sut } = makeSut();
         const recentPosts = await sut.perform({ authorsIds: ["any_id", "any_sec_id"] });
         expect(Array.isArray(recentPosts)).toBeTruthy();
     });
