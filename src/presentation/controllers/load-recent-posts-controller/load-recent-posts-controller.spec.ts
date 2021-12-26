@@ -30,5 +30,6 @@ describe("load-recent-posts-controller.spec usecase", () => {
         const sut = new LoadRecentPostsController(loadFollowingAuthorsListSpy, loadRecentPostsSpy);
         const recentPosts = await sut.handle({ followedBy: "any_profile_id" });
         expect(recentPosts.statusCode).toBe(200);
+        expect(recentPosts.body).toHaveProperty('posts')
     });
 });
