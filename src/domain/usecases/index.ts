@@ -1,3 +1,3 @@
-export * from "./get-profile-by-id";
-export * from "./get-post-like-count";
-export * from './get-profile-like-count'
+export * from "./load-profile";
+export * from "./count-post-likes";
+export * from './count-profile-likes'

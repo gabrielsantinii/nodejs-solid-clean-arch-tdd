@@ -1,10 +1,10 @@
 import { ProfileModel } from "../models";
 
-export interface GetProfileById {
-    perform: (params: GetProfileById.Params) => Promise<GetProfileById.Result>;
+export interface LoadProfile {
+    perform: (params: LoadProfile.Params) => Promise<LoadProfile.Result>;
 }
 
-export namespace GetProfileById {
+export namespace LoadProfile {
     export type Params = {
         profileId: string;
     };

@@ -1,3 +1,3 @@
-export * from "./get-profile-by-id-repository";
-export * from "./get-post-like-count-repository";
-export * from './get-profile-like-count-repository'
+export * from "./load-profile-repository";
+export * from "./count-profile-likes-repository";
+export * from "./count-post-likes-repository";

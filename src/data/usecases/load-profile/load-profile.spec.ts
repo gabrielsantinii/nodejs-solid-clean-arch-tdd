@@ -1,16 +1,16 @@
 import { ProfileMongoRepository } from "@/infra/db";
-import { GetProfileByIdRepository } from "@/data/protocols/db";
-import { DbGetProfileById } from "./get-profile-by-id";
+import { LoadProfileRepository } from "@/data/protocols/db";
+import { DbLoadProfile } from "./load-profile";
 
 type SutType = {
-    getProfileByIdRepository: GetProfileByIdRepository;
-    sut: DbGetProfileById;
+    loadProfileRepository: LoadProfileRepository;
+    sut: DbLoadProfile;
 };
 
 const makeSut = (): SutType => {
-    const getProfileByIdRepository = new ProfileMongoRepository();
-    const sut = new DbGetProfileById(getProfileByIdRepository);
-    return { sut, getProfileByIdRepository };
+    const loadProfileRepository = new ProfileMongoRepository();
+    const sut = new DbLoadProfile(loadProfileRepository);
+    return { sut, loadProfileRepository };
 };
 
 describe("get-profile-by-id usecase", () => {
