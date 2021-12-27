@@ -26,19 +26,29 @@ class ValidationSpy implements Validation {
     }
 }
 
+type SutType = {
+    validationSpy: ValidationSpy;
+    sut: ValidationMiddleware;
+};
+
+const makeSut = (): SutType => {
+    const validationSpy = new ValidationSpy();
+    const sut = new ValidationMiddleware(validationSpy);
+    return { validationSpy, sut };
+};
+
 describe("validation-middleware.spec usecase", () => {
     it("should return bad-request when given invalid params.", async () => {
-        const validationSpy = new ValidationSpy();
-        const sut = new ValidationMiddleware(validationSpy);
+        const { sut, validationSpy } = makeSut();
         const httpResponse = sut.handle({ any_invalid_param: "" });
 
         expect(httpResponse).toEqual(badRequest([validationSpy.result as Error]));
     });
 
     it("should return ok when given validation pass.", async () => {
-        const validationSpy = new ValidationSpy();
-        const sut = new ValidationMiddleware(validationSpy);
-        validationSpy.result = undefined
+        const { sut, validationSpy } = makeSut();
+
+        validationSpy.result = undefined;
         const httpResponse = sut.handle({});
 
         expect(httpResponse).toEqual(ok({}));
