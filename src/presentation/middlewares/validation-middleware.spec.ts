@@ -1,28 +1,8 @@
-import { HttpResponse, Middleware, Validation, CompositeValidation } from "@/presentation/protocols";
+import { Validation } from "@/presentation/protocols";
 import { ok, badRequest, serverError } from "@/presentation/helpers";
 import { MissingParamError } from "@/presentation/errors";
 import { throwError } from "@/tests/domain/mocks";
-
-class ValidationMiddleware implements Middleware {
-    constructor(private readonly validation: Validation | CompositeValidation<any>) {}
-
-    handle(request: any): HttpResponse {
-        try {
-            let errors: Error[] = [];
-            const validateError = this.validation.validate(request);
-            if (Array.isArray(validateError)) {
-                errors = validateError;
-            } else if (validateError) {
-                errors.push(validateError);
-            }
-            if (errors.length) return badRequest(errors);
-
-            return ok(request);
-        } catch (e) {
-            return serverError(e as Error);
-        }
-    }
-}
+import { ValidationMiddleware } from "@/presentation/middlewares";
 
 class ValidationSpy implements Validation {
     result: Error | undefined = new MissingParamError("any_required_field");
