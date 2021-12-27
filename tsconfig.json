@@ -1,17 +1,22 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
-    "target": "es2019",    
-    "module": "commonjs",  
-    "esModuleInterop": true, 
-    "sourceMap": true,
-    "rootDirs": ["src", "tests"],
-    "baseUrl": "src",
+    "target": "es2017",
+    "module": "commonjs",
+    "lib": ["es6", "dom"],
+    "allowJs": true,
+    "rootDir": ".",
+    "outDir": "./dist/lib",
+    "declarationDir": "./dist/@types",
+    "declaration": true,
+    "removeComments": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
     "paths": {
-      "@/tests/*": ["../tests/*"],
-      "@/*": ["*"]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "tests"],
-  "exclude": []
+  "include": ["src/**/*", "**/*.spec.ts"]
 }
