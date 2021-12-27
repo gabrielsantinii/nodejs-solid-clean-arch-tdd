@@ -1,27 +1,26 @@
 import { MissingParamError } from "@/presentation/errors";
+import { RequiredFieldValidation } from "@/validation/validators";
 
-class RequiredFieldValidation {
-    constructor(private readonly fieldName: string) {}
+type SutType = {
+    sut: RequiredFieldValidation;
+    fieldToValidate: string;
+};
 
-    validate(input: any): Error | undefined {
-        if (!input[this.fieldName]) return new MissingParamError(this.fieldName);
-
-        return undefined;
-    }
-}
+const makeSut = (fieldToValidate: string): SutType => {
+    const sut = new RequiredFieldValidation(fieldToValidate);
+    return { sut, fieldToValidate };
+};
 
 describe("required-field-validation.spec usecase", () => {
     it("should statements return MissingParamError if the input hasnt the field to validate.", async () => {
-        const fieldToValidate = "email";
-        const sut = new RequiredFieldValidation(fieldToValidate);
+        const { sut, fieldToValidate } = makeSut("email");
         const error = sut.validate({ "e-mail": "test@example.com" });
         expect(error).toEqual(new MissingParamError(fieldToValidate));
     });
 
     it("should statements return undefined if the input has the field to validate.", async () => {
-        const fieldToValidate = "email";
-        const sut = new RequiredFieldValidation(fieldToValidate);
-        const error = sut.validate({ "email": "test@example.com" });
+        const { sut } = makeSut("email");
+        const error = sut.validate({ email: "test@example.com" });
         expect(error).toBe(undefined);
     });
 });
