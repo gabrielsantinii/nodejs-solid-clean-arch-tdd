@@ -1,8 +1,8 @@
 import { AddProfile } from "@/domain/usecases";
-import { ValidationComposite } from "@/validation/protocols";
+import { CompositeValidation } from "@/presentation/protocols";
 import { RequiredFieldValidation } from "@/validation/validators";
 
-export class AddAccountValidation implements ValidationComposite<AddProfile.Params> {
+export class AddAccountValidation implements CompositeValidation<AddProfile.Params> {
     readonly fields: Array<keyof Partial<AddProfile.Params>> = ["name", "username", "email", "password"];
 
     validate(input: any): Error[] {
