@@ -20,7 +20,7 @@ class ValidationMiddleware implements Middleware {
 }
 
 class ValidationSpy implements Validation {
-    result: Error = new MissingParamError("any_required_field");
+    result: Error | undefined = new MissingParamError("any_required_field");
     validate(input: any): Error | undefined {
         return this.result;
     }
@@ -32,6 +32,15 @@ describe("validation-middleware.spec usecase", () => {
         const sut = new ValidationMiddleware(validationSpy);
         const httpResponse = sut.handle({ any_invalid_param: "" });
 
-        expect(httpResponse).toEqual(badRequest([validationSpy.result]))
+        expect(httpResponse).toEqual(badRequest([validationSpy.result as Error]));
+    });
+
+    it("should return ok when given validation pass.", async () => {
+        const validationSpy = new ValidationSpy();
+        const sut = new ValidationMiddleware(validationSpy);
+        validationSpy.result = undefined
+        const httpResponse = sut.handle({});
+
+        expect(httpResponse).toEqual(ok({}));
     });
 });
