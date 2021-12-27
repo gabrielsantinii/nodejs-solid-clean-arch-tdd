@@ -9,7 +9,7 @@ export const adaptRoute = (controller: Controller) => {
         res.statusCode = httpResponse.statusCode;
 
         if (isErrorStatus(httpResponse.statusCode)) {
-            return res.json({ error: httpResponse.body.message });
+            return res.json({ errors: httpResponse.body.map((e: Error) => e.message) });
         }
 
         return res.json(httpResponse.body);
