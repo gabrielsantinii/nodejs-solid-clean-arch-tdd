@@ -1,17 +1,17 @@
-import { Controller } from "@/presentation/protocols";
 import express from "express";
+import { Controller } from "@/presentation/protocols";
 import { isErrorStatus, safeSpread } from "@/main/helpers";
 
 export const adaptRoute = (controller: Controller) => {
-    return async (req: express.Request, res: express.Response) => {
-        const request = { ...safeSpread(req.body), ...safeSpread(req.params) };
+    return async (expressRequest: express.Request, expressResponse: express.Response) => {
+        const request = { ...safeSpread(expressRequest.body), ...safeSpread(expressRequest.params) };
         const httpResponse = await controller.handle(request);
-        res.statusCode = httpResponse.statusCode;
+        expressResponse.statusCode = httpResponse.statusCode;
 
         if (isErrorStatus(httpResponse.statusCode)) {
-            return res.json({ errors: httpResponse.body.map((e: Error) => e.message) });
+            return expressResponse.json({ errors: httpResponse.body.map((e: Error) => e.message) });
         }
 
-        return res.json(httpResponse.body);
+        return expressResponse.json(httpResponse.body);
     };
 };
