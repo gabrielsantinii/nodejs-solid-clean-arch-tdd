@@ -1,7 +1,7 @@
 import { LoadFollowingAuthorsList, LoadRecentPosts } from "@/domain/usecases";
 import { noContent, ok, serverError } from "@/presentation/helpers";
 import { mockPostModel, throwError } from "@/tests/domain/mocks";
-import { LoadRecentPostsController } from "./load-recent-posts-controller";
+import { LoadRecentPostsController } from "@/presentation/controllers";
 
 class LoadFollowingAuthorsListSpy implements LoadFollowingAuthorsList {
     followedBy = "";

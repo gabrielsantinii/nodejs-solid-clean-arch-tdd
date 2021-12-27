@@ -1,7 +1,7 @@
 import { LoadRecentPostsRepository } from "@/data/protocols/db";
 import { LoadRecentPosts } from "@/domain/usecases";
 import { PostMongoRepository } from "@/infra/db";
-import { DbLoadRecentPosts } from "./load-recent-posts";
+import { DbLoadRecentPosts } from "@/data/usecases/db";
 
 type SutType = {
     sut: LoadRecentPosts;

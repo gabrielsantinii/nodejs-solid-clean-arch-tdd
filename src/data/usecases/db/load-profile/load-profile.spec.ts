@@ -1,5 +1,5 @@
 import { LoadProfileRepository } from "@/data/protocols/db";
-import { DbLoadProfile } from "./load-profile";
+import { DbLoadProfile } from "@/data/usecases/db";
 import { mockProfileModel } from "@/tests/domain/mocks";
 
 class LoadProfileRepositorySpy implements LoadProfileRepository {

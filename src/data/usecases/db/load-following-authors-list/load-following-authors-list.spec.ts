@@ -1,7 +1,7 @@
 import { LoadFollowingAuthorsListRepository } from "@/data/protocols/db";
 import { LoadFollowingAuthorsList } from "@/domain/usecases";
 import { FollowMongoRepository } from "@/infra/db";
-import { DbLoadFollowingAuthorsList } from "./load-following-authors-list";
+import { DbLoadFollowingAuthorsList } from "@/data/usecases/db";
 
 type SutType = {
     sut: LoadFollowingAuthorsList;

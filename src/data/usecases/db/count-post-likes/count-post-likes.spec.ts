@@ -1,7 +1,7 @@
 import { CountPostLikesRepository } from "@/data/protocols/db";
 import { CountPostLikes } from "@/domain/usecases";
 import { LikeMongoRepository } from "@/infra/db";
-import { DbCountPostLikes } from "./count-post-likes";
+import { DbCountPostLikes } from "@/data/usecases/db";
 
 type SutType = {
     sut: CountPostLikes;
