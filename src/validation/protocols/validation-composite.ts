@@ -1,4 +1,4 @@
-export interface ValidationComposite<T = any> {
+export interface ValidationComposite<T> {
     validate: (input: any) => Error[];
     readonly fields: Array<keyof Partial<T>>;
 }

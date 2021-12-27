@@ -1,27 +1,20 @@
-import { AddProfile } from "@/domain/usecases";
-import { ValidationComposite } from "@/validation/protocols";
-import { RequiredFieldValidation } from "@/validation/validators";
 import faker from "faker";
-
-class AddAccountValidation implements ValidationComposite<AddProfile.Params> {
-    readonly fields: Array<keyof Partial<AddProfile.Params>> = ["name", "username", "email", "password"];
-
-    validate(input: any): Error[] {
-        let errors: Error[] = [];
-        this.fields.forEach((field) => {
-            const fieldError = new RequiredFieldValidation(field).validate(input);
-            if (fieldError) errors.push(fieldError);
-        });
-
-        return errors;
-    }
-}
+import { MissingParamError } from "@/presentation/errors";
+import { mockProfileModel } from "@/tests/domain/mocks";
+import { AddAccountValidation } from "./add-account-validation";
 
 describe("add-account-validation.spec usecase", () => {
-    it("should return an array of errors", async () => {
+    it("should return an array of errors with incomplete input", () => {
         const sut = new AddAccountValidation();
-        const errors = sut.validate({ email: faker.random.word() });
+        const errors = sut.validate({ name: faker.random.word() });
         expect(errors.length).toBeGreaterThan(0);
-        expect(errors.some(e => !e.message)).toBeFalsy()
+        expect(errors.some((e) => !e.message)).toBeFalsy();
+        expect(errors).toContainEqual(new MissingParamError("username"));
+    });
+
+    it("should return an empty array on given complete input", () => {
+        const sut = new AddAccountValidation();
+        const errors = sut.validate({ ...mockProfileModel(), password: "213" });
+        expect(errors).toHaveLength(0);
     });
 });
