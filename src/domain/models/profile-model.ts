@@ -1,6 +1,7 @@
 export type ProfileModel = {
     id: string;
     name: string;
+    email: string;
     username: string;
     backgroundUrl: string;
     avatarUrl: string;

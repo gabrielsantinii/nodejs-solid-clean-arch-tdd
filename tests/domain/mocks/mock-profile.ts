@@ -10,5 +10,6 @@ export const mockProfileModel = (): ProfileModel => {
         id: faker.datatype.uuid(),
         name: faker.random.words(),
         username: faker.random.word(),
+        email: faker.internet.email(),
     };
 };
