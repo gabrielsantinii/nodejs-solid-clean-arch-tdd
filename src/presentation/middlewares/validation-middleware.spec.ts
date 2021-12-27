@@ -19,44 +19,43 @@ class CompositeValidationSpy implements CompositeValidation<any> {
     }
 }
 
-type SutType = {
-    spy: ValidationSpy | CompositeValidationSpy;
-    sut: ValidationMiddleware;
-};
-
-const makeSut = (spy: ValidationSpy | CompositeValidationSpy): SutType => {
+const makeSut = (spy: ValidationSpy | CompositeValidationSpy): ValidationMiddleware => {
     const sut = new ValidationMiddleware(spy);
-    return { spy, sut };
+    return sut;
 };
 
 describe("validation-middleware.spec usecase", () => {
     it("should return bad-request when given invalid params.", () => {
-        const { sut, spy } = makeSut(new ValidationSpy());
+        const validationSpy = new ValidationSpy();
+        const sut = makeSut(validationSpy);
         const httpResponse = sut.handle({});
 
-        expect(httpResponse).toEqual(badRequest([spy.result as Error]));
+        expect(httpResponse).toEqual(badRequest([validationSpy.result as Error]));
     });
 
     it("should return bad-request using composite-validation when given invalid params", () => {
-        const { sut, spy } = makeSut(new CompositeValidationSpy());
+        const compositeValidationSpy = new CompositeValidationSpy();
+        const sut = makeSut(compositeValidationSpy);
         const httpResponse = sut.handle({});
 
-        expect(httpResponse).toEqual(badRequest(spy.result as Error[]))
+        expect(httpResponse).toEqual(badRequest(compositeValidationSpy.result));
     });
 
     it("should return ok when given validation pass.", () => {
-        const { sut, spy } = makeSut(new ValidationSpy());
+        const validationSpy = new ValidationSpy();
+        const sut = makeSut(validationSpy);
 
-        spy.result = undefined;
+        validationSpy.result = undefined;
         const httpResponse = sut.handle({});
 
         expect(httpResponse).toEqual(ok({}));
     });
 
     it("should return serverError when any method throws", () => {
-        const { sut, spy } = makeSut(new ValidationSpy());
+        const validationSpy = new ValidationSpy();
+        const sut = makeSut(validationSpy);
 
-        jest.spyOn(spy, "validate").mockImplementationOnce(throwError);
+        jest.spyOn(validationSpy, "validate").mockImplementationOnce(throwError);
         const httpResponse = sut.handle({});
         expect(httpResponse).toEqual(serverError(new Error()));
     });
