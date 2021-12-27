@@ -1,16 +1,24 @@
-import { ProfileMongoRepository } from "@/infra/db";
 import { LoadProfileRepository } from "@/data/protocols/db";
 import { DbLoadProfile } from "./load-profile";
+import { mockProfileModel } from "@/tests/domain/mocks";
+
+class LoadProfileRepositorySpy implements LoadProfileRepository {
+    result: LoadProfileRepository.Result = mockProfileModel();
+    async loadProfile(params: LoadProfileRepository.Params): Promise<LoadProfileRepository.Result> {
+        return this.result;
+    }
+}
 
 type SutType = {
-    loadProfileRepository: LoadProfileRepository;
+    loadProfileRepositorySpy: LoadProfileRepositorySpy;
     sut: DbLoadProfile;
 };
 
 const makeSut = (): SutType => {
-    const loadProfileRepository = new ProfileMongoRepository();
-    const sut = new DbLoadProfile(loadProfileRepository);
-    return { sut, loadProfileRepository };
+    const loadProfileRepositorySpy = new LoadProfileRepositorySpy();
+
+    const sut = new DbLoadProfile(loadProfileRepositorySpy);
+    return { sut, loadProfileRepositorySpy };
 };
 
 describe("get-profile-by-id usecase", () => {
@@ -21,7 +29,8 @@ describe("get-profile-by-id usecase", () => {
     });
 
     it("should return undefined for not existing profile", async () => {
-        const { sut } = makeSut();
+        const { sut, loadProfileRepositorySpy } = makeSut();
+        loadProfileRepositorySpy.result = undefined;
         const profileData = await sut.perform({ profileId: "any_profile_id" });
         expect(profileData?.id).toBeUndefined();
     });
