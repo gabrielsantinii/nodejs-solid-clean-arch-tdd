@@ -1,6 +1,8 @@
 import { AddProfile } from "@/domain/usecases";
 import { mockProfileModel } from "@/tests/domain/mocks";
 
+const mockProfileParams = (): AddProfile.Params => ({ name: "Ronaldo", email: "", password: "", username: "", description: "" });
+
 class AddProfileRepository {
     result: AddProfile.Result = mockProfileModel();
     async add(params: AddProfile.Params): Promise<AddProfile.Result> {
@@ -20,7 +22,7 @@ describe("add-profile.spec usecase", () => {
     it("should create the profile and return the created data with id.", async () => {
         const addProfileRepository = new AddProfileRepository();
         const sut = new DbAddProfile(addProfileRepository);
-        const createdProfile = await sut.perform({ name: "Ronaldo", email: "", password: "", username: "", description: "" });
+        const createdProfile = await sut.perform(mockProfileParams());
         expect(createdProfile).toHaveProperty("id");
     });
 
