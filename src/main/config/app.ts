@@ -1,8 +1,9 @@
 import express from "express";
-import { setupRoutes } from "@/main/config";
+import { setupRoutes, setupMiddlewares } from "@/main/config";
 
 export const setupApp = (): express.Application => {
     const app = express();
+    setupMiddlewares(app)
     setupRoutes(app);
     return app;
 };
