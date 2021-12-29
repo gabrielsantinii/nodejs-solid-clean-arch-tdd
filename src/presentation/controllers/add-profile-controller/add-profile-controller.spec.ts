@@ -1,5 +1,5 @@
 import { AddProfile, CheckProfileByEmail, CheckProfileByUsername } from "@/domain/usecases";
-import { CustomParamError } from "@/presentation/errors/custom-param-error";
+import { CustomParamError } from "@/presentation/errors";
 import { badRequest, created, serverError } from "@/presentation/helpers";
 import { mockProfileModel, throwError } from "@/tests/domain/mocks";
 import { AddProfileController } from "@/presentation/controllers";
