@@ -1,43 +1,10 @@
 import { AddProfile, CheckProfileByEmail, CheckProfileByUsername } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors/custom-param-error";
 import { badRequest, created, serverError } from "@/presentation/helpers";
-import { Controller, HttpResponse } from "@/presentation/protocols";
 import { mockProfileModel, throwError } from "@/tests/domain/mocks";
+import { AddProfileController } from "@/presentation/controllers";
 
 const mockProfileParams = (): AddProfileController.Request => ({ name: "Ronaldo", email: "", password: "", username: "", description: "" });
-
-
-class AddProfileController implements Controller {
-    constructor(
-        private readonly checkProfileByEmail: CheckProfileByEmail,
-        private readonly checkProfileByUsername: CheckProfileByUsername,
-        private readonly addProfile: AddProfile
-    ) {}
-
-    async handle(request: AddProfileController.Request): Promise<AddProfileController.Result> {
-        try {
-            const existsByEmail = await this.checkProfileByEmail.perform({ email: request.email });
-            if (existsByEmail) {
-                return badRequest([new CustomParamError("The email already exists.")]);
-            }
-
-            const existsByUsername = await this.checkProfileByUsername.perform({ username: request.username });
-            if (existsByUsername) {
-                return badRequest([new CustomParamError("The username already exists.")]);
-            }
-
-            const createdProfile = await this.addProfile.perform(request);
-            return created(createdProfile);
-        } catch (err) {
-            return serverError(err as Error);
-        }
-    }
-}
-
-export namespace AddProfileController {
-    export type Request = AddProfile.Params;
-    export type Result = HttpResponse;
-}
 
 class CheckProfileByEmailSpy implements CheckProfileByEmail {
     result: CheckProfileByEmail.Result = false;
@@ -82,7 +49,7 @@ describe("add-profile-controller.spec usecase", () => {
     it("should return created response (201) for successful add profile", async () => {
         const { sut } = makeSut();
         const httpResponse = await sut.handle(mockProfileParams());
-        expect(httpResponse.statusCode).toBe(201)
+        expect(httpResponse.statusCode).toBe(created(httpResponse.body).statusCode);
     });
 
     it("should return bad request error (400) for existing username.", async () => {
@@ -101,8 +68,8 @@ describe("add-profile-controller.spec usecase", () => {
 
     it("should return server error (500) for internal throws", async () => {
         const { sut, checkProfileByEmailSpy } = makeSut();
-        jest.spyOn(checkProfileByEmailSpy, 'perform').mockImplementationOnce(throwError)
+        jest.spyOn(checkProfileByEmailSpy, "perform").mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(mockProfileParams());
         expect(httpResponse).toEqual(serverError(new Error()));
-    })
+    });
 });
