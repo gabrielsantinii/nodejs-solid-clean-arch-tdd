@@ -1,8 +1,9 @@
 import express from "express";
-import { postsRoutes } from "@/main/routes";
+import { postsRoutes, profileRoutes } from "@/main/routes";
 
 export const setupRoutes = (app: express.Application): void => {
     const router = express.Router();
-    postsRoutes(router)
+    postsRoutes(router);
+    profileRoutes(router);
     app.use("/", router);
 };

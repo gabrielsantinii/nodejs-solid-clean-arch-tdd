@@ -1,1 +1,1 @@
-export * from './add-account-validation-middleware-factory'
+export * from './add-profile-validation-middleware-factory'

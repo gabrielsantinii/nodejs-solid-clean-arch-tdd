@@ -1,1 +1,1 @@
-export * from './add-account-validation-factory'
+export * from './add-profile-validation-factory'
