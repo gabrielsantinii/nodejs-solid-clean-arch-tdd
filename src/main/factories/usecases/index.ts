@@ -1,2 +1,5 @@
 export * from './load-recent-posts-factory'
 export * from './load-following-authors-list-factory'
+export * from './check-profile-by-email-factory'
+export * from './check-profile-by-username-factory'
+export * from './add-profile-factory'
