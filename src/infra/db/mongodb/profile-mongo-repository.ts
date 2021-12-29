@@ -13,14 +13,23 @@ export class ProfileMongoRepository
     }
 
     async add(params: AddProfileRepository.Params): Promise<AddProfileRepository.Result> {
-        return;
+        return {
+            id: 'asghsadd-agisdkljada-asdasd',
+            name: params.name,
+            avatarUrl: "",
+            backgroundUrl: "",
+            createdAt: new Date(),
+            description: params.description || "",
+            email: params.email,
+            username: params.username,
+        };
     }
 
     async checkByUsername(params: CheckProfileByUsernameRepository.Params): Promise<CheckProfileByUsernameRepository.Result> {
-        return;
+        return undefined;
     }
 
     async checkByEmail(params: CheckProfileByEmailRepository.Params): Promise<CheckProfileByEmailRepository.Result> {
-        return;
+        return undefined;
     }
 }
