@@ -12,7 +12,6 @@ export class LengthFieldValidation implements Validation {
     }
 
     validate(input: unknown = {}): Error | undefined {
-        console.log("Found length: ", String(input[this.fieldName]).length);
         const validMin = this.validateMin(input);
         const validMax = this.validateMax(input);
 
