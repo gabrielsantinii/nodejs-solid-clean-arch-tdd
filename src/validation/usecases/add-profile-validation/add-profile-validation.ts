@@ -6,7 +6,15 @@ export class AddProfileValidation implements CompositeValidation<AddProfile.Para
     readonly fields: Array<keyof Partial<AddProfile.Params>> = ["name", "username", "email", "password"];
 
     validate(input: any): Error[] {
-        let errors: Error[] = [];
+        const errors: Error[] = [];
+        const requiredErrors = this.validateRequiredFields(input);
+        if (requiredErrors.length) return requiredErrors;
+
+        return errors;
+    }
+
+    private validateRequiredFields(input: any): Error[] {
+        const errors: Error[] = [];
         this.fields.forEach((field) => {
             const fieldError = new RequiredFieldValidation(field).validate(input);
             if (fieldError) errors.push(fieldError);
