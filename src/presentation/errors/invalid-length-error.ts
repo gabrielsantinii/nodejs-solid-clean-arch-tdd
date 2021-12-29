@@ -1,12 +1,5 @@
-type InvalidLengthParams = {
-    paramName: string;
-    min?: number;
-    max?: number;
-    found: number;
-};
-
 export class InvalidLengthError extends Error {
-    constructor({ paramName, min, max, found }: InvalidLengthParams) {
+    constructor({ paramName, min, max, found }: InvalidLengthError.Params) {
         let errorMessage = `Invalid length for ${paramName}. `;
         if (min) errorMessage += `Min: ${min}. `;
         if (max) errorMessage += `Max: ${max}. `;
@@ -14,4 +7,13 @@ export class InvalidLengthError extends Error {
         super(errorMessage);
         this.name = "InvalidLengthError";
     }
+}
+
+export namespace InvalidLengthError {
+    export type Params = {
+        paramName: string;
+        min?: number;
+        max?: number;
+        found: number;
+    };
 }
