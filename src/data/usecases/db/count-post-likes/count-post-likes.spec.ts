@@ -1,17 +1,24 @@
 import { CountPostLikesRepository } from "@/data/protocols/db";
 import { CountPostLikes } from "@/domain/usecases";
-import { LikeMongoRepository } from "@/infra/db";
 import { DbCountPostLikes } from "@/data/usecases/db";
+
+class CountPostLikesRepositorySpy implements  CountPostLikesRepository {
+    result: CountPostLikesRepository.Result = 10
+
+    async countLikeByPostId(params: CountPostLikes.Params): Promise<CountPostLikesRepository.Result> {
+        return this.result
+    }
+}
 
 type SutType = {
     sut: CountPostLikes;
-    countPostLikesRepository: CountPostLikesRepository;
+    countPostLikesRepositorySpy: CountPostLikesRepositorySpy;
 };
 
 const makeSut = (): SutType => {
-    const countPostLikesRepository = new LikeMongoRepository();
-    const sut = new DbCountPostLikes(countPostLikesRepository);
-    return { sut, countPostLikesRepository };
+    const countPostLikesRepositorySpy = new CountPostLikesRepositorySpy();
+    const sut = new DbCountPostLikes(countPostLikesRepositorySpy);
+    return { sut, countPostLikesRepositorySpy };
 };
 
 describe("get-like-count-by-post-id usecase", () => {
