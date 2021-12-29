@@ -36,7 +36,7 @@ export class LengthFieldValidation implements Validation {
 
     private validateMin(input: unknown): boolean {
         if (!this?.min) return true;
-        const greaterThanMin = this.min < String(input[this.fieldName]).length;
+        const greaterThanMin = this.min <= String(input[this.fieldName]).length;
         return greaterThanMin;
     }
 }
