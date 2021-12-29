@@ -1,6 +1,6 @@
 import { AddProfile, CheckProfileByEmail, CheckProfileByUsername } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
-import { badRequest, created, serverError } from "@/presentation/helpers";
+import { httpResponse } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 
 export class AddProfileController implements Controller {
@@ -14,18 +14,18 @@ export class AddProfileController implements Controller {
         try {
             const existsByEmail = await this.checkProfileByEmail.perform({ email: request.email });
             if (existsByEmail) {
-                return badRequest([new CustomParamError("The email already exists.")]);
+                return httpResponse.badRequest([new CustomParamError("The email already exists.")]);
             }
 
             const existsByUsername = await this.checkProfileByUsername.perform({ username: request.username });
             if (existsByUsername) {
-                return badRequest([new CustomParamError("The username already exists.")]);
+                return httpResponse.badRequest([new CustomParamError("The username already exists.")]);
             }
 
             const createdProfile = await this.addProfile.perform(request);
-            return created(createdProfile);
+            return httpResponse.created(createdProfile);
         } catch (err) {
-            return serverError(err as Error);
+            return httpResponse.serverError(err as Error);
         }
     }
 }

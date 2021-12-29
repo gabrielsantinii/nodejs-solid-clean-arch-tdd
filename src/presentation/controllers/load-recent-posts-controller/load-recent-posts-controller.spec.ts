@@ -1,5 +1,5 @@
 import { LoadFollowingAuthorsList, LoadRecentPosts } from "@/domain/usecases";
-import { noContent, ok, serverError } from "@/presentation/helpers";
+import { httpResponse } from "@/presentation/helpers";
 import { mockPostModel, throwError } from "@/tests/domain/mocks";
 import { LoadRecentPostsController } from "@/presentation/controllers";
 
@@ -44,9 +44,9 @@ describe("load-recent-posts-controller.spec usecase", () => {
     it("should return a successful status (200) for populated response", async () => {
         const { sut, loadRecentPostsSpy, loadFollowingAuthorsListSpy } = makeSut();
         const mockedRequest = mockRequest();
-        const httpResponse = await sut.handle(mockedRequest);
+        const controllerResponse = await sut.handle(mockedRequest);
 
-        expect(httpResponse).toEqual(ok(loadRecentPostsSpy.result));
+        expect(controllerResponse).toEqual(httpResponse.ok(loadRecentPostsSpy.result));
 
         // Ensure the props are being passed correctly
         expect(loadFollowingAuthorsListSpy.followedBy).toBe(mockedRequest.followedBy);
@@ -56,14 +56,14 @@ describe("load-recent-posts-controller.spec usecase", () => {
     it("should return noContent (204) when load-recent-posts are empty array", async () => {
         const { sut, loadRecentPostsSpy } = makeSut();
         loadRecentPostsSpy.result = [];
-        const httpResponse = await sut.handle(mockRequest());
-        expect(httpResponse).toEqual(noContent());
+        const controllerResponse = await sut.handle(mockRequest());
+        expect(controllerResponse).toEqual(httpResponse.noContent());
     });
 
     it("should return server error (500) when any method throws error", async () => {
         const { sut, loadRecentPostsSpy } = makeSut();
         jest.spyOn(loadRecentPostsSpy, "perform").mockImplementationOnce(throwError);
-        const httpResponse = await sut.handle(mockRequest());
-        expect(httpResponse).toEqual(serverError(new Error()));
+        const controllerResponse = await sut.handle(mockRequest());
+        expect(controllerResponse).toEqual(httpResponse.serverError(new Error()));
     });
 });

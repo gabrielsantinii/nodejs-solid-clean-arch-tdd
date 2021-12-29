@@ -1,5 +1,5 @@
 import { LoadFollowingAuthorsList, LoadRecentPosts } from "@/domain/usecases";
-import { noContent, ok, serverError } from "@/presentation/helpers";
+import { httpResponse } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 
 export class LoadRecentPostsController implements Controller {
@@ -9,11 +9,11 @@ export class LoadRecentPostsController implements Controller {
         try {
             const followingAuthorsList = await this.loadFollowingAuthorsList.perform({ followedBy: request.followedBy });
             const recentPosts = await this.loadRecentPosts.perform({ authorsIds: followingAuthorsList, limit: 20 });
-            if (!recentPosts.length) return noContent();
+            if (!recentPosts.length) return httpResponse.noContent();
 
-            return ok(recentPosts);
+            return httpResponse.ok(recentPosts);
         } catch (error) {
-            return serverError(error as Error);
+            return httpResponse.serverError(error as Error);
         }
     }
 }

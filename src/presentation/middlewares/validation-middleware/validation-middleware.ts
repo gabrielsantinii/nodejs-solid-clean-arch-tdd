@@ -1,5 +1,5 @@
 import { Middleware, Validation, CompositeValidation, HttpResponse } from "@/presentation/protocols";
-import { badRequest, ok, serverError } from "@/presentation/helpers";
+import { httpResponse } from "@/presentation/helpers";
 
 export class ValidationMiddleware implements Middleware {
     constructor(private readonly validation: Validation | CompositeValidation<any>) {}
@@ -13,11 +13,11 @@ export class ValidationMiddleware implements Middleware {
             } else if (validateError) {
                 errors.push(validateError);
             }
-            if (errors.length) return badRequest(errors);
+            if (errors.length) return httpResponse.badRequest(errors);
 
-            return ok(request);
+            return httpResponse.ok(request);
         } catch (e) {
-            return serverError(e as Error);
+            return httpResponse.serverError(e as Error);
         }
     }
 }

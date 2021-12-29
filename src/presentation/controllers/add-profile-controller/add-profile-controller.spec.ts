@@ -1,6 +1,6 @@
 import { AddProfile, CheckProfileByEmail, CheckProfileByUsername } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
-import { badRequest, created, serverError } from "@/presentation/helpers";
+import { httpResponse } from "@/presentation/helpers";
 import { mockProfileModel, throwError } from "@/tests/domain/mocks";
 import { AddProfileController } from "@/presentation/controllers";
 
@@ -48,28 +48,28 @@ const makeSut = (): SutType => {
 describe("add-profile-controller.spec usecase", () => {
     it("should return created response (201) for successful add profile", async () => {
         const { sut } = makeSut();
-        const httpResponse = await sut.handle(mockProfileParams());
-        expect(httpResponse.statusCode).toBe(created(httpResponse.body).statusCode);
+        const controllerResponse = await sut.handle(mockProfileParams());
+        expect(controllerResponse.statusCode).toBe(httpResponse.created(controllerResponse.body).statusCode);
     });
 
     it("should return bad request error (400) for existing username.", async () => {
         const { sut, checkProfileByUsernameSpy } = makeSut();
         checkProfileByUsernameSpy.result = true;
-        const httpResponse = await sut.handle(mockProfileParams());
-        expect(httpResponse).toEqual(badRequest([new CustomParamError("The username already exists.")]));
+        const controllerResponse = await sut.handle(mockProfileParams());
+        expect(controllerResponse).toEqual(httpResponse.badRequest([new CustomParamError("The username already exists.")]));
     });
 
     it("should return bad request error (400) for existing email.", async () => {
         const { sut, checkProfileByEmailSpy } = makeSut();
         checkProfileByEmailSpy.result = true;
-        const httpResponse = await sut.handle(mockProfileParams());
-        expect(httpResponse).toEqual(badRequest([new CustomParamError("The email already exists.")]));
+        const controllerResponse = await sut.handle(mockProfileParams());
+        expect(controllerResponse).toEqual(httpResponse.badRequest([new CustomParamError("The email already exists.")]));
     });
 
     it("should return server error (500) for internal throws", async () => {
         const { sut, checkProfileByEmailSpy } = makeSut();
         jest.spyOn(checkProfileByEmailSpy, "perform").mockImplementationOnce(throwError);
-        const httpResponse = await sut.handle(mockProfileParams());
-        expect(httpResponse).toEqual(serverError(new Error()));
+        const controllerResponse = await sut.handle(mockProfileParams());
+        expect(controllerResponse).toEqual(httpResponse.serverError(new Error()));
     });
 });
