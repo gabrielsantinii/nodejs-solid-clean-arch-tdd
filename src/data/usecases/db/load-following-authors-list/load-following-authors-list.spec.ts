@@ -1,14 +1,20 @@
 import { LoadFollowingAuthorsListRepository } from "@/data/protocols/db";
 import { LoadFollowingAuthorsList } from "@/domain/usecases";
-import { FollowMongoRepository } from "@/infra/db";
 import { DbLoadFollowingAuthorsList } from "@/data/usecases/db";
+
+class LoadFollowingAuthorsListRepositorySpy implements LoadFollowingAuthorsListRepository {
+    result: LoadFollowingAuthorsListRepository.Result = ["any-author-id", "any-second-author-id"];
+    async loadFollowingAuthors(params: LoadFollowingAuthorsList.Params): Promise<LoadFollowingAuthorsList.Result> {
+        return this.result;
+    }
+}
 
 type SutType = {
     sut: LoadFollowingAuthorsList;
     loadFollowingAuthorsListRepository: LoadFollowingAuthorsListRepository;
 };
 const makeSut = (): SutType => {
-    const loadFollowingAuthorsListRepository = new FollowMongoRepository();
+    const loadFollowingAuthorsListRepository = new LoadFollowingAuthorsListRepositorySpy();
     const sut = new DbLoadFollowingAuthorsList(loadFollowingAuthorsListRepository);
     return { loadFollowingAuthorsListRepository, sut };
 };

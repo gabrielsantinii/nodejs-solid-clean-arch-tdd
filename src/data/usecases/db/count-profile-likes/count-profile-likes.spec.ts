@@ -1,17 +1,23 @@
 import { CountProfileLikesRepository } from "@/data/protocols/db";
 import { CountProfileLikes } from "@/domain/usecases";
-import { LikeMongoRepository } from "@/infra/db";
 import { DbCountProfileLikes } from "@/data/usecases/db";
+
+class CountProfileLikesRepositorySpy implements CountProfileLikesRepository {
+    result: CountProfileLikesRepository.Result = 10
+     async countByProfileId (params: CountProfileLikes.Params): Promise<CountProfileLikesRepository.Result> {
+        return this.result
+     }
+}
 
 type SutType = {
     sut: CountProfileLikes;
-    countProfileLikesRepository: CountProfileLikesRepository;
+    countProfileLikesRepositorySpy: CountProfileLikesRepositorySpy;
 };
 
 const makeSut = (): SutType => {
-    const countProfileLikesRepository = new LikeMongoRepository();
-    const sut = new DbCountProfileLikes(countProfileLikesRepository);
-    return { sut, countProfileLikesRepository };
+    const countProfileLikesRepositorySpy = new CountProfileLikesRepositorySpy();
+    const sut = new DbCountProfileLikes(countProfileLikesRepositorySpy);
+    return { sut, countProfileLikesRepositorySpy };
 };
 
 describe("get-like-count-by-profile-id.spec usecase", () => {
