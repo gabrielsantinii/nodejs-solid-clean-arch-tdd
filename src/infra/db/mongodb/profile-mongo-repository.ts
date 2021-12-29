@@ -1,6 +1,13 @@
-import { AddProfileRepository, CheckProfileByUsernameRepository, LoadProfileRepository } from "@/data/protocols/db";
+import {
+    AddProfileRepository,
+    CheckProfileByEmailRepository,
+    CheckProfileByUsernameRepository,
+    LoadProfileRepository,
+} from "@/data/protocols/db";
 
-export class ProfileMongoRepository implements LoadProfileRepository, AddProfileRepository, CheckProfileByUsernameRepository {
+export class ProfileMongoRepository
+    implements LoadProfileRepository, AddProfileRepository, CheckProfileByUsernameRepository, CheckProfileByEmailRepository
+{
     async loadProfile({ profileId }: LoadProfileRepository.Params): Promise<LoadProfileRepository.Result> {
         return undefined;
     }
@@ -10,6 +17,10 @@ export class ProfileMongoRepository implements LoadProfileRepository, AddProfile
     }
 
     async checkByUsername(params: CheckProfileByUsernameRepository.Params): Promise<CheckProfileByUsernameRepository.Result> {
+        return;
+    }
+
+    async checkByEmail(params: CheckProfileByEmailRepository.Params): Promise<CheckProfileByEmailRepository.Result> {
         return;
     }
 }
