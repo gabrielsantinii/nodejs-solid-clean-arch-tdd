@@ -23,7 +23,13 @@ class DbAddProfile implements AddProfile {
     constructor(private readonly addProfileRepository: AddProfileRepository) {}
 
     async perform(params: AddProfile.Params): Promise<AddProfile.Result> {
-        return this.addProfileRepository.add(params);
+        const createdProfile = await this.addProfileRepository.add(params);
+        this.verifyAndThrowForInvalidId(createdProfile);
+        return createdProfile;
+    }
+
+    private verifyAndThrowForInvalidId(profileResult: AddProfile.Result): void {
+        if (!profileResult.id) throw new Error("Could not save the profile on database.");
     }
 }
 
@@ -48,8 +54,8 @@ describe("add-profile.spec usecase", () => {
 
     it("Should throws an error if the created profile do not provide the id.", async () => {
         const { sut, addProfileRepositorySpy } = makeSut();
+        addProfileRepositorySpy.result = { ...addProfileRepositorySpy.result, id: "" };
 
-        const createdProfile = await sut.perform(mockProfileParams());
-        expect(createdProfile).toHaveProperty("id");
+        expect(async () => await sut.perform(mockProfileParams())).rejects.toThrow("Could not save the profile on database.");
     });
 });
