@@ -1,23 +1,7 @@
-import { ProfileModel } from "@/domain/models";
+import { CheckProfileByUsernameRepository } from "@/data/protocols/db";
+import { DbCheckProfileByUsername } from "@/data/usecases/db";
+import { CheckProfileByUsername } from "@/domain/usecases";
 import { mockProfileModel } from "@/tests/domain/mocks";
-
-export interface CheckProfileByUsername {
-    perform: (params: CheckProfileByUsername.Params) => Promise<CheckProfileByUsername.Result>;
-}
-
-export namespace CheckProfileByUsername {
-    export type Params = { username: string };
-    export type Result = boolean;
-}
-
-export interface CheckProfileByUsernameRepository {
-    checkByUsername: (params: CheckProfileByUsernameRepository.Params) => Promise<CheckProfileByUsernameRepository.Result>;
-}
-
-export namespace CheckProfileByUsernameRepository {
-    export type Params = CheckProfileByUsername.Params;
-    export type Result = ProfileModel | undefined;
-}
 
 class CheckProfileByUsernameRepositorySpy implements CheckProfileByUsernameRepository {
     result: CheckProfileByUsernameRepository.Result = mockProfileModel();
@@ -38,19 +22,17 @@ const makeSut = (): SutType => {
     return { sut, checkProfileByUsernameRepositorySpy };
 };
 
-class DbCheckProfileByUsername implements CheckProfileByUsername {
-    constructor(private readonly checkProfileByUsernameRepository: CheckProfileByUsernameRepository) {}
-
-    async perform(params: CheckProfileByUsername.Params): Promise<CheckProfileByUsername.Result> {
-        const profile = await this.checkProfileByUsernameRepository.checkByUsername({ username: params.username });
-        return !!profile;
-    }
-}
-
 describe("check-profile-by-username.spec usecase", () => {
-    it("should return true if exists.", async () => {
+    it("should return true cause exists.", async () => {
         const { sut } = makeSut();
         const profileExists = await sut.perform({ username: "" });
         expect(profileExists).toBeTruthy();
+    });
+
+    it("should return false cause doesnt exists.", async () => {
+        const { sut, checkProfileByUsernameRepositorySpy } = makeSut();
+        checkProfileByUsernameRepositorySpy.result = undefined;
+        const profileExists = await sut.perform({ username: "" });
+        expect(profileExists).toBeFalsy();
     });
 });
