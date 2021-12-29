@@ -69,4 +69,10 @@ describe("length-field-validation.spec usecase", () => {
         const error = sut.validate({ username: "hello there1" });
         expect(error).toBeTruthy();
     });
+
+    it("should return error for length less than min length", async () => {
+        const sut = new LengthFieldValidation({ min: 10, max: 20, fieldName: "username" });
+        const error = sut.validate({ username: "hello" });
+        expect(error).toBeTruthy();
+    });
 });
