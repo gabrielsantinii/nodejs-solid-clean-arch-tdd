@@ -19,11 +19,16 @@ const makeSut = (): SutType => {
     return { loadFollowingAuthorsListRepository, sut };
 };
 
+const hasDuplicates = (list: Array<any>): boolean => {
+    return list.some(element => list.filter(existingElement => element === existingElement).length > 1)
+}
+
 describe("load-following-authors-list.spec usecase", () => {
     it("should return a list with id of following authors.", async () => {
         const { sut } = makeSut();
         const followingAuthors = await sut.perform({ followedBy: "any_profile_id" });
         expect(Array.isArray(followingAuthors)).toBe(true);
         expect(followingAuthors.some((f) => typeof f !== "string")).toBe(false);
+        expect(hasDuplicates(followingAuthors)).toBe(false)
     });
 });
