@@ -1,27 +1,12 @@
+import { LoadPostsByAuthorRepository } from "@/data/protocols/db";
 import { LoadPostsByAuthor } from "@/domain/usecases";
 import { mockPostModel } from "@/tests/domain/mocks";
+import { DbLoadPostsByAuthor } from "@/data/usecases/db";
 
 class LoadPostsByAuthorRepositorySpy implements LoadPostsByAuthorRepository {
     result: LoadPostsByAuthorRepository.Result = [];
     async loadByAuthor(params: LoadPostsByAuthorRepository.Params): Promise<LoadPostsByAuthorRepository.Result> {
         return this.result;
-    }
-}
-
-interface LoadPostsByAuthorRepository {
-    loadByAuthor: (params: LoadPostsByAuthorRepository.Params) => Promise<LoadPostsByAuthorRepository.Result>;
-}
-
-namespace LoadPostsByAuthorRepository {
-    export type Params = LoadPostsByAuthor.Params;
-    export type Result = LoadPostsByAuthor.Result;
-}
-
-class DbLoadPostsByAuthor implements LoadPostsByAuthor {
-    constructor(private readonly loadPostsByAuthorRepository: LoadPostsByAuthorRepository) {}
-
-    async perform(params: LoadPostsByAuthor.Params): Promise<LoadPostsByAuthor.Result> {
-        return this.loadPostsByAuthorRepository.loadByAuthor({ authorId: params.authorId });
     }
 }
 
@@ -45,7 +30,7 @@ describe("load-posts-by-author.spec usecase", () => {
 
     it("should return a filled array of posts.", async () => {
         const { sut, loadPostsByAuthorRepositorySpy } = makeSut();
-        loadPostsByAuthorRepositorySpy.result = [mockPostModel()]
+        loadPostsByAuthorRepositorySpy.result = [mockPostModel()];
         const posts = await sut.perform({ authorId: "any_author_id" });
         expect(posts.length).toBeGreaterThan(0);
     });
