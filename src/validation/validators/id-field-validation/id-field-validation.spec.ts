@@ -35,4 +35,11 @@ describe("id-field-validation.spec usecase", () => {
         const error = sut.validate({ profileId: "any_id" });
         expect(error).toBeUndefined();
     });
+
+    it("should return error for invalid id field", async () => {
+        const { sut, idValidatorSpy } = makeSut("profileId");
+        idValidatorSpy.result = false;
+        const error = sut.validate({ profileId: "any_id" });
+        expect(error).toEqual(new InvalidParamError("profileId"));
+    });
 });
