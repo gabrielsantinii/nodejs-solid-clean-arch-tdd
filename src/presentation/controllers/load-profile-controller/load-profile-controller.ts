@@ -4,7 +4,7 @@ import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
 
-export class LoadProfileWithPostsController implements Controller {
+export class LoadProfileController implements Controller {
     constructor(
         private readonly loadProfile: LoadProfile,
         private readonly loadPostsByAuthor: LoadPostsByAuthor,

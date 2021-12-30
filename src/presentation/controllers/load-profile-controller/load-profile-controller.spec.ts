@@ -2,7 +2,7 @@ import { CountPostLikes, CountProfileLikes, LoadPostsByAuthor, LoadProfile } fro
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
 import { mockPostModel, mockProfileModel, throwError } from "@/tests/domain/mocks";
-import { LoadProfileWithPostsController } from "./load-profile-controller";
+import { LoadProfileController } from "./load-profile-controller";
 
 class LoadProfileSpy implements LoadProfile {
     result: LoadProfile.Result = undefined;
@@ -33,7 +33,7 @@ class CountPostLikesSpy implements CountPostLikes {
 }
 
 type SutType = {
-    sut: LoadProfileWithPostsController;
+    sut: LoadProfileController;
     loadProfileSpy: LoadProfileSpy;
     loadPostsByAuthorSpy: LoadPostsByAuthorSpy;
     countProfileLikesSpy: CountProfileLikesSpy;
@@ -45,7 +45,7 @@ const makeSut = (): SutType => {
     const loadPostsByAuthorSpy = new LoadPostsByAuthorSpy();
     const countProfileLikesSpy = new CountProfileLikesSpy();
     const countPostLikesSpy = new CountPostLikesSpy();
-    const sut = new LoadProfileWithPostsController(loadProfileSpy, loadPostsByAuthorSpy, countProfileLikesSpy, countPostLikesSpy);
+    const sut = new LoadProfileController(loadProfileSpy, loadPostsByAuthorSpy, countProfileLikesSpy, countPostLikesSpy);
     return { sut, loadProfileSpy, loadPostsByAuthorSpy, countProfileLikesSpy, countPostLikesSpy };
 };
 
