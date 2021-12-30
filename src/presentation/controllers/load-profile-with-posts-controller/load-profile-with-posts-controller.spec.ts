@@ -13,5 +13,6 @@ describe("load-profile-with-posts-controller.spec usecase", () => {
         const sut = new LoadProfileWithPostsController();
         const controllerResponse = await sut.handle({ profileId: 'any_prof_id' })
         expect(controllerResponse.statusCode).toBe(400)
+        expect(controllerResponse).toEqual(httpResponse.badRequest([new CustomParamError(`Profile with id any_prof_id not found.`)]))
     });
 });
