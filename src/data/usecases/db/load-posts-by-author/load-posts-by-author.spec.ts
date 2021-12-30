@@ -1,4 +1,5 @@
 import { LoadPostsByAuthor } from "@/domain/usecases";
+import { mockPostModel } from "@/tests/domain/mocks";
 
 class LoadPostsByAuthorRepositorySpy implements LoadPostsByAuthorRepository {
     result: LoadPostsByAuthorRepository.Result = [];
@@ -40,5 +41,12 @@ describe("load-posts-by-author.spec usecase", () => {
         const { sut } = makeSut();
         const posts = await sut.perform({ authorId: "any_author_id" });
         expect(Array.isArray(posts)).toBe(true);
+    });
+
+    it("should return a filled array of posts.", async () => {
+        const { sut, loadPostsByAuthorRepositorySpy } = makeSut();
+        loadPostsByAuthorRepositorySpy.result = [mockPostModel()]
+        const posts = await sut.perform({ authorId: "any_author_id" });
+        expect(posts.length).toBeGreaterThan(0);
     });
 });
