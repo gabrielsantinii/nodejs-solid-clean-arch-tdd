@@ -1,34 +1,11 @@
-import { PostModel } from "@/domain/models";
+
 import { CountPostLikes, CountProfileLikes, LoadPostsByAuthor, LoadProfile } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
-import { Controller, HttpResponse } from "@/presentation/protocols";
 import { mockPostModel, mockProfileModel } from "@/tests/domain/mocks";
+import { LoadProfileWithPostsController } from "./load-profile-with-posts-controller";
 
-class LoadProfileWithPostsController implements Controller {
-    constructor(
-        private readonly loadProfile: LoadProfile,
-        private readonly loadPostsByAuthor: LoadPostsByAuthor,
-        private readonly countProfileLikes: CountProfileLikes,
-        private readonly countPostLikes: CountPostLikes
-    ) {}
 
-    async handle(request: any): Promise<HttpResponse> {
-        const profile = await this.loadProfile.perform({ profileId: request.profileId });
-        if (!profile) return httpResponse.badRequest([new CustomParamError(`Profile with id ${request.profileId} not found.`)]);
-
-        const profileLikesCount = await this.countProfileLikes.perform({ profileId: request.profileId });
-
-        const posts = await this.loadPostsByAuthor.perform({ authorId: request.profileId });
-        const postsWithLikes: Array<PostModel & { likesCount: number }> = await Promise.all(
-            posts.map(async (post) => {
-                const postLikesCount = await this.countPostLikes.perform({ postId: post.id });
-                return { ...post, likesCount: postLikesCount };
-            })
-        );
-        return httpResponse.ok({ ...profile, likesCount: profileLikesCount, posts: postsWithLikes });
-    }
-}
 
 class LoadProfileSpy implements LoadProfile {
     result: LoadProfile.Result = undefined;
