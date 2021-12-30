@@ -20,4 +20,10 @@ describe("Profiles Routes", () => {
                 .expect(201);
         });
     });
+
+    describe("GET /profiles/:profileId", () => {
+        it("Should return 400 on profile not found", async () => {
+            await request(app).get("/profiles/any_profile_id").expect(400);
+        });
+    });
 });
