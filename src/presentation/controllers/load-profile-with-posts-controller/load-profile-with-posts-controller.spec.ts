@@ -1,11 +1,8 @@
-
 import { CountPostLikes, CountProfileLikes, LoadPostsByAuthor, LoadProfile } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
-import { mockPostModel, mockProfileModel } from "@/tests/domain/mocks";
+import { mockPostModel, mockProfileModel, throwError } from "@/tests/domain/mocks";
 import { LoadProfileWithPostsController } from "./load-profile-with-posts-controller";
-
-
 
 class LoadProfileSpy implements LoadProfile {
     result: LoadProfile.Result = undefined;
@@ -53,13 +50,13 @@ const makeSut = (): SutType => {
 };
 
 describe("load-profile-with-posts-controller.spec usecase", () => {
-    it("should return badRequest for non-existing profile.", async () => {
+    it("should return badRequest 400 for non-existing profile.", async () => {
         const { sut } = makeSut();
         const controllerResponse = await sut.handle({ profileId: "any_prof_id" });
         expect(controllerResponse).toEqual(httpResponse.badRequest([new CustomParamError(`Profile with id any_prof_id not found.`)]));
     });
 
-    it("should return ok for existing profile.", async () => {
+    it("should return ok 200 for existing profile.", async () => {
         const { sut, loadProfileSpy, loadPostsByAuthorSpy, countProfileLikesSpy, countPostLikesSpy } = makeSut();
         const mockProfile = mockProfileModel();
         const mockPost = mockPostModel();
@@ -78,5 +75,12 @@ describe("load-profile-with-posts-controller.spec usecase", () => {
                 posts: [mockPost].map((p) => ({ ...p, likesCount: mockPostLikesCount })),
             })
         );
+    });
+
+    it("should return server error 500 for internal throw exception", async () => {
+        const { sut, countPostLikesSpy } = makeSut();
+        jest.spyOn(countPostLikesSpy, "perform").mockImplementationOnce(throwError);
+        const controllerResponse = await sut.handle({ profileId: "123" });
+        expect(controllerResponse).toEqual(httpResponse.serverError(new Error()));
     });
 });
