@@ -8,3 +8,5 @@ export type PostModel = {
     postedAt: Date;
     contentDescription: string;
 };
+
+export type PostModelWithLikes = PostModel & { likesCount: number };

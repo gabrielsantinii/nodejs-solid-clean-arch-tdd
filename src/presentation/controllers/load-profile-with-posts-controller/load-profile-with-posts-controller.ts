@@ -1,4 +1,4 @@
-import { PostModel, ProfileModel } from "@/domain/models";
+import { PostModel, PostModelWithLikes, ProfileModel, ProfileModelWithLikes } from "@/domain/models";
 import { CountPostLikes, CountProfileLikes, LoadPostsByAuthor, LoadProfile } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
@@ -19,6 +19,8 @@ export class LoadProfileWithPostsController implements Controller {
 
             const profileLikesCount = await this.countProfileLikes.perform({ profileId: request.profileId });
 
+            if (request.loadPosts !== "true") return httpResponse.ok({ ...profile, likesCount: profileLikesCount });
+
             const posts = await this.loadPostsByAuthor.perform({ authorId: request.profileId });
             const postsWithLikes: Array<PostModel & { likesCount: number }> = await Promise.all(
                 posts.map(async (post) => {
@@ -34,6 +36,6 @@ export class LoadProfileWithPostsController implements Controller {
 }
 
 export namespace LoadProfileWithPostsController {
-    export type Request = { profileId: string };
-    export type Result = HttpResponse<ProfileModel & { likesCount: number; posts: Array<PostModel & { likesCount: number }> }>;
+    export type Request = { profileId: string; loadPosts?: string };
+    export type Result = HttpResponse<ProfileModelWithLikes | (ProfileModelWithLikes & { posts: PostModelWithLikes })>;
 }

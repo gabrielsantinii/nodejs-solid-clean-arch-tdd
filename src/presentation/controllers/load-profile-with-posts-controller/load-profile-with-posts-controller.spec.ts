@@ -56,7 +56,22 @@ describe("load-profile-with-posts-controller.spec usecase", () => {
         expect(controllerResponse).toEqual(httpResponse.badRequest([new CustomParamError(`Profile with id any_prof_id not found.`)]));
     });
 
-    it("should return ok 200 for existing profile.", async () => {
+    it("should return ok 200 with only profile data cause loadPosts isnt 'true'", async () => {
+        const { sut, loadProfileSpy, countProfileLikesSpy } = makeSut();
+        const mockProfile = mockProfileModel();
+        const mockProfileLikesCount = 10;
+        loadProfileSpy.result = mockProfile;
+        countProfileLikesSpy.result = mockProfileLikesCount;
+        const controllerResponse = await sut.handle({ profileId: "any_prof_id", loadPosts: "anyval" });
+        expect(controllerResponse).toEqual(
+            httpResponse.ok({
+                ...mockProfile,
+                likesCount: mockProfileLikesCount,
+            })
+        );
+    });
+
+    it("should return ok 200 for existing profile and loadPosts as true.", async () => {
         const { sut, loadProfileSpy, loadPostsByAuthorSpy, countProfileLikesSpy, countPostLikesSpy } = makeSut();
         const mockProfile = mockProfileModel();
         const mockPost = mockPostModel();
@@ -66,7 +81,7 @@ describe("load-profile-with-posts-controller.spec usecase", () => {
         loadPostsByAuthorSpy.result = [mockPost];
         countProfileLikesSpy.result = mockProfileLikesCount;
         countPostLikesSpy.result = mockPostLikesCount;
-        const controllerResponse = await sut.handle({ profileId: "any_prof_id" });
+        const controllerResponse = await sut.handle({ profileId: "any_prof_id", loadPosts: "true" });
 
         expect(controllerResponse).toEqual(
             httpResponse.ok({
@@ -78,9 +93,9 @@ describe("load-profile-with-posts-controller.spec usecase", () => {
     });
 
     it("should return server error 500 for internal throw exception", async () => {
-        const { sut, countPostLikesSpy } = makeSut();
-        jest.spyOn(countPostLikesSpy, "perform").mockImplementationOnce(throwError);
-        const controllerResponse = await sut.handle({ profileId: "123" });
+        const { sut, loadProfileSpy } = makeSut();
+        jest.spyOn(loadProfileSpy, "perform").mockImplementationOnce(throwError);
+        const controllerResponse = await sut.handle({ profileId: "123", loadPosts: "true" });
         expect(controllerResponse).toEqual(httpResponse.serverError(new Error()));
     });
 });
