@@ -1,17 +1,18 @@
-import { LoadProfile } from "@/domain/usecases";
+import { LoadPostsByAuthor, LoadProfile } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
-import { mockProfileModel } from "@/tests/domain/mocks";
+import { mockPostModel, mockProfileModel } from "@/tests/domain/mocks";
 
 class LoadProfileWithPostsController implements Controller {
-    constructor(private readonly loadProfile: LoadProfile) {}
+    constructor(private readonly loadProfile: LoadProfile, private readonly loadPostsByAuthor: LoadPostsByAuthor) {}
 
     async handle(request: any): Promise<HttpResponse> {
         const profile = await this.loadProfile.perform({ profileId: request.profileId });
         if (!profile) return httpResponse.badRequest([new CustomParamError(`Profile with id ${request.profileId} not found.`)]);
 
-        return httpResponse.ok(profile);
+        const posts = await this.loadPostsByAuthor.perform({ authorId: request.profileId });
+        return httpResponse.ok({ ...profile, posts });
     }
 }
 
@@ -22,15 +23,24 @@ class LoadProfileSpy implements LoadProfile {
     }
 }
 
+class LoadPostsByAuthorSpy implements LoadPostsByAuthor {
+    result: LoadPostsByAuthor.Result = [];
+    async perform(params: LoadPostsByAuthor.Params): Promise<LoadPostsByAuthor.Result> {
+        return this.result;
+    }
+}
+
 type SutType = {
     sut: LoadProfileWithPostsController;
     loadProfileSpy: LoadProfileSpy;
+    loadPostsByAuthorSpy: LoadPostsByAuthorSpy;
 };
 
 const makeSut = (): SutType => {
     const loadProfileSpy = new LoadProfileSpy();
-    const sut = new LoadProfileWithPostsController(loadProfileSpy);
-    return { sut, loadProfileSpy };
+    const loadPostsByAuthorSpy = new LoadPostsByAuthorSpy();
+    const sut = new LoadProfileWithPostsController(loadProfileSpy, loadPostsByAuthorSpy);
+    return { sut, loadProfileSpy, loadPostsByAuthorSpy };
 };
 
 describe("load-profile-with-posts-controller.spec usecase", () => {
@@ -41,11 +51,13 @@ describe("load-profile-with-posts-controller.spec usecase", () => {
     });
 
     it("should return ok for existing profile.", async () => {
-        const { sut, loadProfileSpy } = makeSut();
+        const { sut, loadProfileSpy, loadPostsByAuthorSpy } = makeSut();
         const mockProfile = mockProfileModel();
+        const mockPost = mockPostModel();
         loadProfileSpy.result = mockProfile;
+        loadPostsByAuthorSpy.result = [mockPost]
         const controllerResponse = await sut.handle({ profileId: "any_prof_id" });
 
-        expect(controllerResponse).toEqual(httpResponse.ok(mockProfile));
+        expect(controllerResponse).toEqual(httpResponse.ok({ ...mockProfile, posts: [mockPost] }));
     });
 });
