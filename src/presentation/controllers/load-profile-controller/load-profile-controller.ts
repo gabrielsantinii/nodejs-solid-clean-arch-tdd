@@ -1,8 +1,9 @@
-import { PostModel, PostModelWithLikes, ProfileModel, ProfileModelWithLikes } from "@/domain/models";
+import { PostModel, PostModelWithLikes, ProfileModelWithLikes } from "@/domain/models";
 import { CountPostLikes, CountProfileLikes, LoadPostsByAuthor, LoadProfile } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
+import { isValidObjectId } from "mongoose";
 
 export class LoadProfileController implements Controller {
     constructor(

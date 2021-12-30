@@ -26,7 +26,7 @@ const hasDuplicates = (list: Array<any>): boolean => {
 describe("load-following-authors-list.spec usecase", () => {
     it("should return a list with id of following authors.", async () => {
         const { sut } = makeSut();
-        const followingAuthors = await sut.perform({ followedBy: "any_profile_id" });
+        const followingAuthors = await sut.perform({ followingId: "any_profile_id" });
         expect(Array.isArray(followingAuthors)).toBe(true);
         expect(followingAuthors.some((f) => typeof f !== "string")).toBe(false);
         expect(hasDuplicates(followingAuthors)).toBe(false)

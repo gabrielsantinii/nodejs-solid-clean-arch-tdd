@@ -4,10 +4,10 @@ import { mockPostModel, throwError } from "@/tests/domain/mocks";
 import { LoadRecentPostsController } from "@/presentation/controllers";
 
 class LoadFollowingAuthorsListSpy implements LoadFollowingAuthorsList {
-    followedBy = "";
+    followingId = "";
     result = ["any_author_id", "any_author_id2", "any_author_id3"];
     async perform(params: LoadFollowingAuthorsList.Params): Promise<LoadFollowingAuthorsList.Result> {
-        this.followedBy = params.followedBy;
+        this.followingId = params.followingId;
         return this.result;
     }
 }
@@ -24,7 +24,7 @@ class LoadRecentPostsSpy implements LoadRecentPosts {
     }
 }
 
-const mockRequest = (): LoadRecentPostsController.Request => ({ followedBy: "any_profile_id" });
+const mockRequest = (): LoadRecentPostsController.Request => ({ followingId: "any_profile_id" });
 
 type SutType = {
     loadFollowingAuthorsListSpy: LoadFollowingAuthorsListSpy;
@@ -49,7 +49,7 @@ describe("load-recent-posts-controller.spec usecase", () => {
         expect(controllerResponse).toEqual(httpResponse.ok(loadRecentPostsSpy.result));
 
         // Ensure the props are being passed correctly
-        expect(loadFollowingAuthorsListSpy.followedBy).toBe(mockedRequest.followedBy);
+        expect(loadFollowingAuthorsListSpy.followingId).toBe(mockedRequest.followingId);
         expect(loadRecentPostsSpy.authorsIds).toBe(loadFollowingAuthorsListSpy.result);
     });
 

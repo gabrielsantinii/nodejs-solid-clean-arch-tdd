@@ -3,6 +3,6 @@ export interface LoadFollowingAuthorsList {
 }
 
 export namespace LoadFollowingAuthorsList {
-    export type Params = { followedBy: string };
+    export type Params = { followingId: string };
     export type Result = string[];
 }

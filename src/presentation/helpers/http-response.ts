@@ -12,10 +12,13 @@ export const httpResponse = {
         body: new UnauthorizedError(),
     }),
 
-    serverError: (error: Error): HttpResponse => ({
-        statusCode: 500,
-        body: [new ServerError(error.stack as string)],
-    }),
+    serverError: (error: Error): HttpResponse => {
+        console.log("Internal Server Error: ", error)
+        return {
+            statusCode: 500,
+            body: [new ServerError(error.stack as string)],
+        };
+    },
 
     ok: (data: any): HttpResponse => ({
         statusCode: 200,

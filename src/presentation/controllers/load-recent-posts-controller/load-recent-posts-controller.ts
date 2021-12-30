@@ -7,7 +7,7 @@ export class LoadRecentPostsController implements Controller {
 
     async handle(request: LoadRecentPostsController.Request): Promise<HttpResponse> {
         try {
-            const followingAuthorsList = await this.loadFollowingAuthorsList.perform({ followedBy: request.followedBy });
+            const followingAuthorsList = await this.loadFollowingAuthorsList.perform({ followingId: request.followingId });
             const recentPosts = await this.loadRecentPosts.perform({ authorsIds: followingAuthorsList, limit: 20 });
             if (!recentPosts.length) return httpResponse.noContent();
 
@@ -20,6 +20,6 @@ export class LoadRecentPostsController implements Controller {
 
 export namespace LoadRecentPostsController {
     export type Request = {
-        followedBy: string;
+        followingId: string;
     };
 }

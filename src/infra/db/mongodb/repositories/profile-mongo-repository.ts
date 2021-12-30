@@ -1,35 +1,36 @@
+import mongoose from "mongoose";
 import {
     AddProfileRepository,
     CheckProfileByEmailRepository,
     CheckProfileByUsernameRepository,
     LoadProfileRepository,
 } from "@/data/protocols/db";
+import { MongoHelper } from "@/infra/db/mongodb/helpers";
+import { ProfileModel } from "@/domain/models";
 
 export class ProfileMongoRepository
     implements LoadProfileRepository, AddProfileRepository, CheckProfileByUsernameRepository, CheckProfileByEmailRepository
 {
+    private readonly collection: mongoose.Model<ProfileModel>;
+    constructor() {
+        this.collection = MongoHelper.getCollection("profiles");
+    }
     async loadProfile({ profileId }: LoadProfileRepository.Params): Promise<LoadProfileRepository.Result> {
-        return undefined;
+        const profileDoc = await this.collection.findById(profileId);
+        return profileDoc.toJSON() as any;
     }
 
     async add(params: AddProfileRepository.Params): Promise<AddProfileRepository.Result> {
-        return {
-            id: 'asghsadd-agisdkljada-asdasd',
-            name: params.name,
-            avatarUrl: "",
-            backgroundUrl: "",
-            createdAt: new Date(),
-            description: params.description || "",
-            email: params.email,
-            username: params.username,
-        };
+        const createdProfile = new this.collection(params);
+        await createdProfile.save();
+        return createdProfile.toJSON() as any;
     }
 
     async checkByUsername(params: CheckProfileByUsernameRepository.Params): Promise<CheckProfileByUsernameRepository.Result> {
-        return undefined;
+        return this.collection.findOne(params) as any;
     }
 
     async checkByEmail(params: CheckProfileByEmailRepository.Params): Promise<CheckProfileByEmailRepository.Result> {
-        return undefined;
+        return this.collection.findOne(params) as any;
     }
 }
