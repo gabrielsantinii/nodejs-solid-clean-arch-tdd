@@ -7,7 +7,6 @@ export const adaptRoute = (controller: Controller) => {
         const request = { ...safeSpread(expressRequest.body), ...safeSpread(expressRequest.params) };
         const httpResponse = await controller.handle(request);
         expressResponse.statusCode = httpResponse.statusCode;
-        console.log("Controller http response: ", httpResponse)
         if (isErrorStatus(httpResponse.statusCode)) {
             return expressResponse.json({ errors: httpResponse.body.map((e: Error) => e.message) });
         }
