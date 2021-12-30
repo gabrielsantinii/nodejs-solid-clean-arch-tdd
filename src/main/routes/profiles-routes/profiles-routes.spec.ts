@@ -1,10 +1,12 @@
 import express from "express";
 import request from "supertest";
-import { setupApp } from "@/main/config";
+import { setupApp, setupEnvironment, setupMongoDb } from "@/main/config";
 let app: express.Application;
 
 describe("Profiles Routes", () => {
     beforeAll(async () => {
+        await setupEnvironment();
+        await setupMongoDb();
         app = setupApp();
     });
 
