@@ -2,7 +2,7 @@ import { CountPostLikes, CountProfileLikes, LoadPostsByAuthor, LoadProfile } fro
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
 import { mockPostModel, mockProfileModel, throwError } from "@/tests/domain/mocks";
-import { LoadProfileWithPostsController } from "./load-profile-with-posts-controller";
+import { LoadProfileWithPostsController } from "./load-profile-controller";
 
 class LoadProfileSpy implements LoadProfile {
     result: LoadProfile.Result = undefined;
