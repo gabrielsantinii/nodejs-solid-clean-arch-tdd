@@ -1,6 +1,6 @@
 import { AddProfile } from "@/domain/usecases";
 import { CompositeValidation } from "@/presentation/protocols";
-import { EmailFieldValidation, LengthFieldValidation, RequiredFieldValidation } from "@/validation/validators";
+import { EmailFieldValidation, LengthFieldValidation, RequiredFieldValidation, UsernameFieldValidation } from "@/validation/validators";
 
 export class AddProfileValidation implements CompositeValidation<AddProfile.Params> {
     readonly fields: Array<keyof Partial<AddProfile.Params>> = ["name", "username", "email", "password"];
@@ -16,6 +16,9 @@ export class AddProfileValidation implements CompositeValidation<AddProfile.Para
 
         const emailError = new EmailFieldValidation("email").validate(input);
         if (emailError) invalidErrors.push(emailError);
+
+        const usernameError = new UsernameFieldValidation("username").validate(input);
+        if (usernameError) invalidErrors.push(usernameError);
 
         return invalidErrors;
     }
