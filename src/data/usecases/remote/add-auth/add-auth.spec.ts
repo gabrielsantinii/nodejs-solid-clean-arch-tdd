@@ -1,4 +1,8 @@
-class RemoteAddAuth {
+interface AddAuth {
+    perform: (params: { email: string; password: string }) => Promise<{ authId: string }>;
+}
+
+class RemoteAddAuth implements AddAuth {
     async perform(params: { email: string; password: string }): Promise<{ authId: string }> {
         const createdAuth = { authId: "any-auth-id" };
         return createdAuth;
