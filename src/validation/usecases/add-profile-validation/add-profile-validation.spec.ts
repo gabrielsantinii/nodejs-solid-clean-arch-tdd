@@ -1,6 +1,5 @@
 import faker from "faker";
 import { InvalidParamError, MissingParamError } from "@/presentation/errors";
-import { mockProfileModel } from "@/tests/domain/mocks";
 import { AddProfileValidation } from "@/validation/usecases";
 
 describe("add-account-validation.spec usecase", () => {
