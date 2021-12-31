@@ -1,5 +1,12 @@
-import { initializeApp } from "firebase-admin";
+import { initializeApp, default as firebaseAdmin } from "firebase-admin";
+import { environment } from "@/main/config";
 
 export const setupFirebase = async () => {
-    const firebaseApp = initializeApp({});
+    initializeApp({
+        credential: firebaseAdmin.credential.cert({
+            clientEmail: environment.firebaseClientEmail,
+            privateKey: environment.firebasePrivateKey,
+            projectId: environment.firebaseProjectId,
+        }),
+    });
 };
