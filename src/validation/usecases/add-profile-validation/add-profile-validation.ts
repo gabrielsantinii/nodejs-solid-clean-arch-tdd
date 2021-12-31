@@ -1,6 +1,6 @@
 import { AddProfile } from "@/domain/usecases";
 import { CompositeValidation } from "@/presentation/protocols";
-import { LengthFieldValidation, RequiredFieldValidation } from "@/validation/validators";
+import { EmailFieldValidation, LengthFieldValidation, RequiredFieldValidation } from "@/validation/validators";
 
 export class AddProfileValidation implements CompositeValidation<AddProfile.Params> {
     readonly fields: Array<keyof Partial<AddProfile.Params>> = ["name", "username", "email", "password"];
@@ -9,10 +9,15 @@ export class AddProfileValidation implements CompositeValidation<AddProfile.Para
         const requiredErrors = this.validateRequiredFields(input);
         if (requiredErrors.length) return requiredErrors;
 
-        const lengthErrors = this.validateLengthFields(input);
-        if (lengthErrors.length) return lengthErrors;
+        const invalidErrors = [];
 
-        return [];
+        const lengthErrors = this.validateLengthFields(input);
+        invalidErrors.concat(lengthErrors);
+
+        const emailError = new EmailFieldValidation("email").validate(input);
+        if (emailError) invalidErrors.push(emailError);
+
+        return invalidErrors;
     }
 
     private validateRequiredFields(input: any): Error[] {
@@ -25,7 +30,7 @@ export class AddProfileValidation implements CompositeValidation<AddProfile.Para
         return errors;
     }
 
-    private validateLengthFields(input: string): Error[] {
+    private validateLengthFields(input: any): Error[] {
         const errors: Error[] = [];
         this.fields.forEach((fieldName) => {
             const fieldError = new LengthFieldValidation({ fieldName, min: 3, max: 45 }).validate(input);

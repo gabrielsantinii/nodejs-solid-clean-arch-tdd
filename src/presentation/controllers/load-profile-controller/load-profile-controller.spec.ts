@@ -53,7 +53,7 @@ describe("load-profile-with-posts-controller.spec usecase", () => {
     it("should return badRequest 400 for non-existing profile.", async () => {
         const { sut } = makeSut();
         const controllerResponse = await sut.handle({ profileId: "any_prof_id" });
-        expect(controllerResponse).toEqual(httpResponse.badRequest([new CustomParamError(`Profile with id any_prof_id not found.`)]));
+        expect(controllerResponse).toEqual(httpResponse.notFound([new CustomParamError(`Profile with id any_prof_id not found.`)]));
     });
 
     it("should return ok 200 with only profile data cause loadPosts isnt 'true'", async () => {

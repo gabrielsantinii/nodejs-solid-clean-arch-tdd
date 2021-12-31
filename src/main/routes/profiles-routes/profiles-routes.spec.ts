@@ -19,7 +19,7 @@ describe("Profiles Routes", () => {
         it("Should return 201 on created success", async () => {
             await request(app)
                 .post("/profiles")
-                .send({ description: "any_description", name: "any_name", username: "any_username", email: "any_email", password: "1412" })
+                .send({ description: "any_description", name: "any_name", username: "any_username", email: "any@valid.com", password: "1412" })
                 .expect(201);
         });
     });
