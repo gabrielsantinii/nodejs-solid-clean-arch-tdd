@@ -9,7 +9,10 @@ export const setupEnvironment = async (): Promise<void> => {
     environment = {
         port: Number(process.env.PORT || 8080) as number,
         mongoUri: process.env.MONGO_URI as string,
-        type: process.env.NODE_ENV || "PROD" as any,
+        type: process.env.NODE_ENV || ("PROD" as any),
+        firebaseProjectId: process.env.FIREBASE_PROJECT_ID as string,
+        firebasePrivateKey: process.env.FIREBASE_PRIVATE_KEY as string,
+        firebaseClientEmail: process.env.FIREBASE_CLIENT_EMAIL as string,
     };
 };
 
@@ -17,8 +20,11 @@ type Environment = {
     port: number;
     mongoUri: string;
     type: EnvironmentType;
+    firebaseProjectId: string;
+    firebasePrivateKey: string;
+    firebaseClientEmail: string;
 };
 
-type EnvironmentType = "PROD" | "DEV"
+type EnvironmentType = "PROD" | "DEV";
 
 export { environment, EnvironmentType };
