@@ -17,7 +17,7 @@ export class ProfileMongoRepository
     }
     async loadProfile({ profileId }: LoadProfileRepository.Params): Promise<LoadProfileRepository.Result> {
         const profileDoc = await this.collection.findById(profileId);
-        return profileDoc.toJSON() as any;
+        return profileDoc ? (profileDoc.toJSON() as any) : undefined;
     }
 
     async add(params: AddProfileRepository.Params): Promise<AddProfileRepository.Result> {

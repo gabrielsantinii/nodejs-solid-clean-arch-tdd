@@ -7,6 +7,11 @@ export const httpResponse = {
         body: errors,
     }),
 
+    notFound: (errors?: Error[]): HttpResponse => ({
+        statusCode: 404,
+        body: errors,
+    }),
+
     serverError: (error: Error): HttpResponse => {
         console.log("Internal Server Error: ", error);
         return {

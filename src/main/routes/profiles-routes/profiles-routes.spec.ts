@@ -2,6 +2,7 @@ import express from "express";
 import request from "supertest";
 import { setupApp, setupEnvironment, setupMongoDb } from "@/main/config";
 let app: express.Application;
+import mongoose from "mongoose";
 
 describe("Profiles Routes", () => {
     beforeAll(async () => {
@@ -24,8 +25,15 @@ describe("Profiles Routes", () => {
     });
 
     describe("GET /profiles/:profileId", () => {
-        it("Should return 400 on profile not found", async () => {
+        it("Should return 400 on invalid given profileId", async () => {
             await request(app).get("/profiles/any_profile_id").expect(400);
+        });
+
+        it("Should return 404 on profileId not found", async () => {
+            
+            await request(app)
+                .get(`/profiles/${new mongoose.Types.ObjectId()}`)
+                .expect(404);
         });
     });
 });

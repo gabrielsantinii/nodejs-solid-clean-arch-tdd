@@ -3,7 +3,6 @@ import { CountPostLikes, CountProfileLikes, LoadPostsByAuthor, LoadProfile } fro
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
-import { isValidObjectId } from "mongoose";
 
 export class LoadProfileController implements Controller {
     constructor(
@@ -16,7 +15,7 @@ export class LoadProfileController implements Controller {
     async handle(request: LoadProfileWithPostsController.Request): Promise<LoadProfileWithPostsController.Result> {
         try {
             const profile = await this.loadProfile.perform({ profileId: request.profileId });
-            if (!profile) return httpResponse.badRequest([new CustomParamError(`Profile with id ${request.profileId} not found.`)]);
+            if (!profile) return httpResponse.notFound([new CustomParamError(`Profile with id ${request.profileId} not found.`)]);
 
             const profileLikesCount = await this.countProfileLikes.perform({ profileId: request.profileId });
 
