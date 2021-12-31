@@ -4,13 +4,16 @@ import { Validation } from "@/presentation/protocols";
 export class UsernameFieldValidation implements Validation {
     private readonly transformations: Array<(v: string) => string> = [
         (v) => v.toLowerCase(),
-        // Remove all accents
-        (v) => v.normalize("NFD").replace(/\p{Diacritic}/gu, ""),
+        function removeAllAccents(v) {
+            return v.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+        },
     ];
     private readonly validations: Array<(v: string) => boolean> = [
-        // Only alphanumeric characters
-        (v) => !!v.match(/^[a-z0-9_]/g),
+        function onlyAlphanumeric(v) {
+            return !!v.match(/^[a-z0-9_]/g);
+        },
         (v) => v[0] !== "_",
+        (v) => v[v.length - 1] !== "_",
         (v) => !v.includes("__"),
         (v) => !v.includes("@"),
     ];
