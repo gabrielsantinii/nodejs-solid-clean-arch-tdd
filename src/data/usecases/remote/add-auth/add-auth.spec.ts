@@ -1,16 +1,11 @@
-interface AddAuthAdapter {
-    add: (params: { email: string; password: string }) => Promise<{ authId: string }>;
-}
+import { AddAuthAdapter } from "@/data/protocols/remote";
+import { AddAuth } from "@/domain/usecases";
 
 class AddAuthAdapterSpy implements AddAuthAdapter {
     result: { authId: string } = { authId: "any_auth_id" };
     async add(params: { email: string; password: string }): Promise<{ authId: string }> {
         return this.result;
     }
-}
-
-interface AddAuth {
-    perform: (params: { email: string; password: string }) => Promise<{ authId: string }>;
 }
 
 class RemoteAddAuth implements AddAuth {
