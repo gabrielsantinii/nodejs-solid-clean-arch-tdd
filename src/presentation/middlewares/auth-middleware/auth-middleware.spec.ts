@@ -1,13 +1,5 @@
-import { LoadProfile } from "@/domain/usecases";
 import { httpResponse } from "@/presentation/helpers";
 import { HttpResponse, Middleware } from "@/presentation/protocols";
-
-class LoadProfileSpy implements LoadProfile {
-    result: LoadProfile.Result = undefined;
-    async perform(params: LoadProfile.Params): Promise<LoadProfile.Result> {
-        return this.result;
-    }
-}
 
 class LoadProfileIdByAuthTokenSpy implements LoadProfileIdByAuthToken {
     result: LoadProfileIdByAuthToken.Result = undefined;
@@ -78,5 +70,12 @@ describe("auth-middleware.spec usecase", () => {
         const { sut } = makeSut();
         const middlewareResponse = await sut.handle({ Authorization: "Bearer anytoken invalidWord" });
         expect(middlewareResponse).toEqual(httpResponse.notAuthorized());
+    });
+
+    it("should return ok with profileId for valid and existing token.", async () => {
+        const { sut, loadProfileIdByAuthTokenSpy } = makeSut();
+        loadProfileIdByAuthTokenSpy.result = { profileId: "valid_profile_id" };
+        const middlewareResponse = await sut.handle({ Authorization: "Bearer any-valid-token" });
+        expect(middlewareResponse).toEqual(httpResponse.ok({ profileId: "valid_profile_id" }));
     });
 });
