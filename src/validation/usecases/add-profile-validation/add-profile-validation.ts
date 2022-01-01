@@ -9,11 +9,11 @@ export class AddProfileValidation implements CompositeValidation<AddProfile.Para
         const requiredErrors = this.validateRequiredFields(input);
         if (requiredErrors.length) return requiredErrors;
 
-        const invalidErrors = [];
+        let invalidErrors = [];
 
         const lengthErrors = this.validateLengthFields(input);
-        invalidErrors.concat(lengthErrors);
-
+        invalidErrors = invalidErrors.concat(lengthErrors);
+        
         const emailError = new EmailFieldValidation("email").validate(input);
         if (emailError) invalidErrors.push(emailError);
 
@@ -39,6 +39,10 @@ export class AddProfileValidation implements CompositeValidation<AddProfile.Para
             const fieldError = new LengthFieldValidation({ fieldName, min: 3, max: 45 }).validate(input);
             if (fieldError) errors.push(fieldError);
         });
+
+        const passwordLengthError = new LengthFieldValidation({ fieldName: "password", min: 6, max: 45 }).validate(input);
+        console.log('Password length error: ', passwordLengthError)
+        if (passwordLengthError) errors.push(passwordLengthError);
 
         return errors;
     }
