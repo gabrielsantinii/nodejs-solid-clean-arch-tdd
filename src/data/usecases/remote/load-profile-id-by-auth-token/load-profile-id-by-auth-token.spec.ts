@@ -1,13 +1,6 @@
+import { LoadAuthIdByAuthTokenAdapter } from "@/data/protocols/remote";
 import { LoadProfileIdByAuthToken } from "@/domain/usecases";
 
-export interface LoadAuthIdByAuthTokenAdapter {
-    loadAuthIdByToken: (params: LoadAuthIdByAuthTokenAdapter.Params) => Promise<LoadAuthIdByAuthTokenAdapter.Result>;
-}
-
-export namespace LoadAuthIdByAuthTokenAdapter {
-    export type Params = { token: string };
-    export type Result = { authId: string };
-}
 
 class LoadAuthIdByAuthTokenAdapterSpy implements LoadAuthIdByAuthTokenAdapter {
     result: LoadAuthIdByAuthTokenAdapter.Result = { authId: undefined };
