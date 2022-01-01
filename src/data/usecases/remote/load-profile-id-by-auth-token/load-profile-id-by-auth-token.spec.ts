@@ -25,11 +25,28 @@ class RemoteLoadProfileIdByAuthToken implements LoadProfileIdByAuthToken {
     }
 }
 
+type SutType = {
+    sut: RemoteLoadProfileIdByAuthToken;
+    loadProfileIdByAuthTokenAdapterSpy: LoadProfileIdByAuthTokenAdapterSpy;
+};
+
+const makeSut = (): SutType => {
+    const loadProfileIdByAuthTokenAdapterSpy = new LoadProfileIdByAuthTokenAdapterSpy();
+    const sut = new RemoteLoadProfileIdByAuthToken(loadProfileIdByAuthTokenAdapterSpy);
+    return { loadProfileIdByAuthTokenAdapterSpy, sut };
+};
+
 describe("load-profile-id-by-auth-token.spec usecase", () => {
-    it("should return profileId for valid auth-token.", async () => {
-        const loadProfileIdByAuthTokenAdapterSpy = new LoadProfileIdByAuthTokenAdapterSpy();
-        const sut = new RemoteLoadProfileIdByAuthToken(loadProfileIdByAuthTokenAdapterSpy);
+    it("should return undefined profileId for non-existing auth-token.", async () => {
+       const { sut } = makeSut()
         const profileByAuthToken = await sut.perform({ authToken: "any_token" });
-        expect(profileByAuthToken).toHaveProperty("profileId");
+        expect(profileByAuthToken.profileId).toBeUndefined();
+    });
+
+    it("should return profileId for valid auth-token.", async () => {
+        const { sut, loadProfileIdByAuthTokenAdapterSpy } = makeSut()
+        loadProfileIdByAuthTokenAdapterSpy.result = { authId: 'existing-profile-id' }
+        const profileByAuthToken = await sut.perform({ authToken: "any_token" });
+        expect(profileByAuthToken.profileId).toBe('existing-profile-id');
     });
 });
