@@ -3,6 +3,9 @@ import request from "supertest";
 import { setupApp, setupEnvironment, setupFirebase, setupMongoDb } from "@/main/config";
 let app: express.Application;
 import mongoose from "mongoose";
+import { ProfileModel } from "@/domain/models";
+
+let createdProfile = {} as ProfileModel;
 
 describe("Profiles Routes", () => {
     beforeAll(async () => {
@@ -10,8 +13,10 @@ describe("Profiles Routes", () => {
         await setupMongoDb();
         await setupFirebase();
         app = setupApp();
-        jest.setTimeout(15000)
+        jest.setTimeout(15000);
     });
+
+    afterAll(async () => {});
 
     describe("POST /profiles", () => {
         it("Should return 400 on missing params", async () => {
@@ -19,7 +24,7 @@ describe("Profiles Routes", () => {
         });
 
         it("Should return 201 on created success", async () => {
-            await request(app)
+            const response = await request(app)
                 .post("/profiles")
                 .send({
                     description: "any_description",
@@ -29,10 +34,17 @@ describe("Profiles Routes", () => {
                     password: "14121241",
                 })
                 .expect(201);
+            createdProfile = response.body;
         });
     });
 
     describe("GET /profiles/:profileId", () => {
+
+        it("Should return ok 200 for existant profielId. The returned id in body needs to be the same to the sent in the request", async () => {
+            const response = await request(app).get(`/profiles/${createdProfile.id}`).expect(200)
+            expect(response.body.id).toBe(createdProfile.id)
+        })
+
         it("Should return 400 on invalid given profileId", async () => {
             await request(app).get("/profiles/any_profile_id").expect(400);
         });
