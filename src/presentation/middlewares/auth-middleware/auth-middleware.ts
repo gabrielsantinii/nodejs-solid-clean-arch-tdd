@@ -7,7 +7,7 @@ export class AuthMiddleware implements Middleware {
 
     async handle(request: AuthMiddleware.Request): Promise<AuthMiddleware.Result> {
         try {
-            const authorization = request?.Authorization;
+            const authorization = request?.authorization;
             if (!authorization) return httpResponse.notAuthorized();
             const isValidToken = this.validateBearerTokenFormat(authorization);
             if (!isValidToken.isValid) return httpResponse.notAuthorized();
@@ -31,6 +31,6 @@ export class AuthMiddleware implements Middleware {
     }
 }
 export namespace AuthMiddleware {
-    export type Request = { Authorization: string }
+    export type Request = { authorization: string }
     export type Result = HttpResponse
 }

@@ -24,33 +24,33 @@ export const makeSut = (): SutType => {
 describe("auth-middleware.spec usecase", () => {
     it("should return notAuthorized 401 for empty authorization.", async () => {
         const { sut } = makeSut();
-        const middlewareResponse = await sut.handle({ Authorization: "" });
+        const middlewareResponse = await sut.handle({ authorization: "" });
         expect(middlewareResponse).toEqual(httpResponse.notAuthorized());
     });
 
     it("should return notAuthorized 401 for authorization that hasnt Bearer prefix.", async () => {
         const { sut } = makeSut();
-        const middlewareResponse = await sut.handle({ Authorization: "any_token" });
+        const middlewareResponse = await sut.handle({ authorization: "any_token" });
         expect(middlewareResponse).toEqual(httpResponse.notAuthorized());
     });
 
     it("should return notAuthorized 401 for authorization that has more than 2 words (prefix and token).", async () => {
         const { sut } = makeSut();
-        const middlewareResponse = await sut.handle({ Authorization: "Bearer anytoken invalidWord" });
+        const middlewareResponse = await sut.handle({ authorization: "Bearer anytoken invalidWord" });
         expect(middlewareResponse).toEqual(httpResponse.notAuthorized());
     });
 
     it("should return ok 200 with profileId for valid and existing token.", async () => {
         const { sut, loadProfileIdByAuthTokenSpy } = makeSut();
         loadProfileIdByAuthTokenSpy.result = { profileId: "valid_profile_id" };
-        const middlewareResponse = await sut.handle({ Authorization: "Bearer any-valid-token" });
+        const middlewareResponse = await sut.handle({ authorization: "Bearer any-valid-token" });
         expect(middlewareResponse).toEqual(httpResponse.ok({ profileId: "valid_profile_id" }));
     });
 
     it("should return server error 500 for internal throws.", async () => {
         const { sut, loadProfileIdByAuthTokenSpy } = makeSut();
         jest.spyOn(loadProfileIdByAuthTokenSpy, "perform").mockImplementationOnce(throwError);
-        const middlewareResponse = await sut.handle({ Authorization: "Bearer any-valid-token" });
+        const middlewareResponse = await sut.handle({ authorization: "Bearer any-valid-token" });
         expect(middlewareResponse).toEqual(httpResponse.serverError(new Error()));
     });
 });

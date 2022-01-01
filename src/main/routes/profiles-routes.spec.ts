@@ -7,6 +7,8 @@ import { ProfileModel } from "@/domain/models";
 import { FirebaseAuth } from "@/infra/remote";
 
 let createdProfile = {} as ProfileModel;
+const firebaseAuth = new FirebaseAuth();
+let bearerToken = "";
 
 describe("Profiles Routes", () => {
     beforeAll(async () => {
@@ -18,7 +20,6 @@ describe("Profiles Routes", () => {
     });
 
     afterAll(async () => {
-        const firebaseAuth = new FirebaseAuth();
         firebaseAuth.delete({ authId: createdProfile.id });
     });
 
@@ -39,21 +40,23 @@ describe("Profiles Routes", () => {
                 })
                 .expect(201);
             createdProfile = response.body;
+            const credentials = await firebaseAuth.generateToken({ authId: createdProfile.id });
+            bearerToken = credentials.token;
         });
     });
 
     describe("GET /profiles/:profileId", () => {
         it("Should return ok 200 for existant profielId. The returned id in body needs to be the same to the sent in the request", async () => {
-            const response = await request(app).get(`/profiles/${createdProfile.id}`).expect(200);
+            const response = await request(app).get(`/profiles/${createdProfile.id}`).auth(bearerToken, { type: "bearer" }).expect(200);
             expect(response.body.id).toBe(createdProfile.id);
         });
 
         it("Should return 400 on invalid given profileId", async () => {
-            await request(app).get("/profiles/any_profile_id").expect(400);
+            await request(app).get("/profiles/any_profile_id").set("Authorization", bearerToken).expect(400);
         });
 
         it("Should return 404 on profileId not found", async () => {
-            await request(app).get(`/profiles/${new mongoose.Types.ObjectId()}`).expect(404);
+            await request(app).get(`/profiles/${new mongoose.Types.ObjectId()}`).set("Authorization", bearerToken).expect(404);
         });
     });
 });
