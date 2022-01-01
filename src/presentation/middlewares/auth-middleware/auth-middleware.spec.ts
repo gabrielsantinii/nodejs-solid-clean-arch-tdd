@@ -1,3 +1,4 @@
+import { LoadProfileIdByAuthToken } from "@/domain/usecases";
 import { httpResponse } from "@/presentation/helpers";
 import { HttpResponse, Middleware } from "@/presentation/protocols";
 import { throwError } from "@/tests/domain/mocks";
@@ -9,15 +10,6 @@ class LoadProfileIdByAuthTokenSpy implements LoadProfileIdByAuthToken {
     }
 }
 
-interface LoadProfileIdByAuthToken {
-    perform: (params: LoadProfileIdByAuthToken.Params) => Promise<LoadProfileIdByAuthToken.Result>;
-}
-
-namespace LoadProfileIdByAuthToken {
-    export type Params = { authToken: string };
-    export type Result = { profileId: string } | undefined;
-}
-
 class AuthMiddleware implements Middleware {
     constructor(private readonly loadProfileIdByAuthToken: LoadProfileIdByAuthToken) {}
 
@@ -25,7 +17,7 @@ class AuthMiddleware implements Middleware {
         try {
             const authorization = request?.Authorization;
             if (!authorization) return httpResponse.notAuthorized();
-            const isValidToken = this.validateBearerTokenType(authorization);
+            const isValidToken = this.validateBearerTokenFormat(authorization);
             if (!isValidToken.isValid) return httpResponse.notAuthorized();
             const profileByToken = await this.loadProfileIdByAuthToken.perform({ authToken: isValidToken.token });
             if (!profileByToken) return httpResponse.notAuthorized();
@@ -36,7 +28,7 @@ class AuthMiddleware implements Middleware {
         }
     }
 
-    private validateBearerTokenType(authorization: string): { isValid: boolean; token: string } {
+    private validateBearerTokenFormat(authorization: string): { isValid: boolean; token: string } {
         const invalidResponse = { isValid: false, token: undefined };
         const [prefix, token] = authorization.split(" ");
         if (prefix !== "Bearer") return invalidResponse;
