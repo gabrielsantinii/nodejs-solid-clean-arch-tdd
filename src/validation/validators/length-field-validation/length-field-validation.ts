@@ -12,8 +12,9 @@ export class LengthFieldValidation implements Validation {
     }
 
     validate(input: unknown = {}): Error | undefined {
-        const validMin = this.validateMin(input);
-        const validMax = this.validateMax(input);
+        const fieldValue = String(input[this.fieldName]);
+        const validMin = this.validateMin(fieldValue);
+        const validMax = this.validateMax(fieldValue);
 
         if (!validMin || !validMax) {
             return new InvalidLengthError({
@@ -26,16 +27,16 @@ export class LengthFieldValidation implements Validation {
         return;
     }
 
-    private validateMax(input: unknown) {
+    private validateMax(fieldValue: string) {
         if (!this?.max) return true;
 
-        const lessThanMax = this.max >= String(input[this.fieldName]).length;
+        const lessThanMax = this.max >= fieldValue.length;
         return lessThanMax;
     }
 
-    private validateMin(input: unknown): boolean {
+    private validateMin(fieldValue: string): boolean {
         if (!this?.min) return true;
-        const greaterThanMin = this.min <= String(input[this.fieldName]).length;
+        const greaterThanMin = this.min <= fieldValue.length;
         return greaterThanMin;
     }
 }
