@@ -31,4 +31,10 @@ describe("auth-middleware.spec usecase", () => {
         const middlewareResponse = await sut.handle({ Authorization: "any_token" });
         expect(middlewareResponse).toEqual(httpResponse.notAuthorized());
     });
+
+    it("should return notAuthorized for authorization that has more than 2 words (prefix and token).", async () => {
+        const sut = new AuthMiddleware();
+        const middlewareResponse = await sut.handle({ Authorization: "Bearer anytoken invalidWord" });
+        expect(middlewareResponse).toEqual(httpResponse.notAuthorized());
+    });
 });
