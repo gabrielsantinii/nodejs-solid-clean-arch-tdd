@@ -26,36 +26,39 @@ namespace LoadProfileIdByAuthToken {
 }
 
 class AuthMiddleware implements Middleware {
-    constructor(private readonly loadProfileIdByAuthToken: LoadProfileIdByAuthToken, private readonly loadProfile: LoadProfile) {}
+    constructor(private readonly loadProfileIdByAuthToken: LoadProfileIdByAuthToken) {}
 
     async handle(request: { Authorization: string }): Promise<HttpResponse> {
         const authorization = request?.Authorization;
         if (!authorization) return httpResponse.notAuthorized();
         const isValidToken = this.validateBearerTokenType(authorization);
         if (!isValidToken.isValid) return httpResponse.notAuthorized();
+        const profileByToken = await this.loadProfileIdByAuthToken.perform({ authToken: isValidToken.token });
+        if (!profileByToken) return httpResponse.notAuthorized();
+
+        return httpResponse.ok({ profileId: profileByToken.profileId });
     }
 
-    private validateBearerTokenType(authorization: string): { isValid: boolean } {
+    private validateBearerTokenType(authorization: string): { isValid: boolean; token: string } {
+        const invalidResponse = { isValid: false, token: undefined };
         const [prefix, token] = authorization.split(" ");
-        if (prefix !== "Bearer") return { isValid: false };
-        if (!token) return { isValid: false };
-        if (authorization.split(" ").length > 2) return { isValid: false };
+        if (prefix !== "Bearer") return invalidResponse;
+        if (!token) return invalidResponse;
+        if (authorization.split(" ").length > 2) return invalidResponse;
 
-        return { isValid: true };
+        return { isValid: true, token };
     }
 }
 
 type SutType = {
     sut: AuthMiddleware;
     loadProfileIdByAuthTokenSpy: LoadProfileIdByAuthTokenSpy;
-    loadProfileSpy: LoadProfileSpy;
 };
 
 export const makeSut = (): SutType => {
     const loadProfileIdByAuthTokenSpy = new LoadProfileIdByAuthTokenSpy();
-    const loadProfileSpy = new LoadProfileSpy();
-    const sut = new AuthMiddleware(loadProfileIdByAuthTokenSpy, loadProfileSpy);
-    return { sut, loadProfileSpy, loadProfileIdByAuthTokenSpy };
+    const sut = new AuthMiddleware(loadProfileIdByAuthTokenSpy);
+    return { sut, loadProfileIdByAuthTokenSpy };
 };
 
 describe("auth-middleware.spec usecase", () => {
