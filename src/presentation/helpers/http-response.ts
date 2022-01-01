@@ -12,6 +12,11 @@ export const httpResponse = {
         body: errors,
     }),
 
+    notAuthorized: (): HttpResponse => ({
+        statusCode: 401,
+        body: null,
+    }),
+
     serverError: (error: Error): HttpResponse => {
         console.log("Internal Server Error: ", error);
         return {
