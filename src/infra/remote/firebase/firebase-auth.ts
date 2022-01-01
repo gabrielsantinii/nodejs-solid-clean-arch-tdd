@@ -16,7 +16,7 @@ export class FirebaseAuth implements AddAuthAdapter, LoadAuthIdByAuthTokenAdapte
         await firebaseAdmin.auth().deleteUser(params.authId);
     }
 
-    async generateToken(params: { authId: string }): Promise<{ token: string }> {
+    async generateCustomToken(params: { authId: string }): Promise<{ token: string }> {
         const token = await firebaseAdmin.auth().createCustomToken(params.authId);
         return { token };
     }

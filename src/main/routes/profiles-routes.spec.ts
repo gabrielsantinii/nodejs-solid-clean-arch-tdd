@@ -1,14 +1,27 @@
 import express from "express";
 import request from "supertest";
-import { setupApp, setupEnvironment, setupFirebase, setupMongoDb } from "@/main/config";
-let app: express.Application;
 import mongoose from "mongoose";
+import axios from "axios";
+import { setupApp, setupEnvironment, environment, setupFirebase, setupMongoDb } from "@/main/config";
+let app: express.Application;
 import { ProfileModel } from "@/domain/models";
 import { FirebaseAuth } from "@/infra/remote";
 
 let createdProfile = {} as ProfileModel;
 const firebaseAuth = new FirebaseAuth();
 let bearerToken = "";
+
+const generateTokenId = async (customToken: string): Promise<{ tokenId: string }> => {
+    const { data } = await axios.request<{ idToken: string }>({
+        url: `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${environment.firebaseWebApiKey}`,
+        method: "post",
+        data: {
+            token: customToken,
+            returnSecureToken: true,
+        },
+    });
+    return { tokenId: data.idToken };
+};
 
 describe("Profiles Routes", () => {
     beforeAll(async () => {
@@ -40,8 +53,9 @@ describe("Profiles Routes", () => {
                 })
                 .expect(201);
             createdProfile = response.body;
-            const credentials = await firebaseAuth.generateToken({ authId: createdProfile.id });
-            bearerToken = credentials.token;
+            const credentials = await firebaseAuth.generateCustomToken({ authId: createdProfile.id });
+            const tokenResult = await generateTokenId(credentials.token);
+            bearerToken = tokenResult.tokenId;
         });
     });
 
@@ -52,11 +66,15 @@ describe("Profiles Routes", () => {
         });
 
         it("Should return 400 on invalid given profileId", async () => {
-            await request(app).get("/profiles/any_profile_id").set("Authorization", bearerToken).expect(400);
+            await request(app).get("/profiles/any_profile_id").auth(bearerToken, { type: "bearer" }).expect(400);
         });
 
         it("Should return 404 on profileId not found", async () => {
-            await request(app).get(`/profiles/${new mongoose.Types.ObjectId()}`).set("Authorization", bearerToken).expect(404);
+            await request(app).get(`/profiles/${new mongoose.Types.ObjectId()}`).auth(bearerToken, { type: "bearer" }).expect(404);
+        });
+
+        it("Should return 401 on unauthed request", async () => {
+            await request(app).get(`/profiles/${new mongoose.Types.ObjectId()}`).expect(401);
         });
     });
 });

@@ -13,6 +13,7 @@ export const setupEnvironment = async (): Promise<void> => {
         firebaseProjectId: process.env.FIREBASE_PROJECT_ID as string,
         firebasePrivateKey: process.env.FIREBASE_PRIVATE_KEY as string,
         firebaseClientEmail: process.env.FIREBASE_CLIENT_EMAIL as string,
+        firebaseWebApiKey: process.env.FIREBASE_WEB_API_KEY as string
     };
 };
 
@@ -23,6 +24,7 @@ type Environment = {
     firebaseProjectId: string;
     firebasePrivateKey: string;
     firebaseClientEmail: string;
+    firebaseWebApiKey: string
 };
 
 type EnvironmentType = "PROD" | "DEV";
