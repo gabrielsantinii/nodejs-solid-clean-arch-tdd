@@ -1,6 +1,6 @@
 import express from "express";
 import request from "supertest";
-import { setupApp, setupEnvironment, setupMongoDb } from "@/main/config";
+import { setupApp, setupEnvironment, setupFirebase, setupMongoDb } from "@/main/config";
 let app: express.Application;
 import mongoose from "mongoose";
 
@@ -8,7 +8,9 @@ describe("Profiles Routes", () => {
     beforeAll(async () => {
         await setupEnvironment();
         await setupMongoDb();
+        await setupFirebase();
         app = setupApp();
+        jest.setTimeout(15000)
     });
 
     describe("POST /profiles", () => {
@@ -19,7 +21,13 @@ describe("Profiles Routes", () => {
         it("Should return 201 on created success", async () => {
             await request(app)
                 .post("/profiles")
-                .send({ description: "any_description", name: "any_name", username: "any_username", email: "any@valid.com", password: "14121241" })
+                .send({
+                    description: "any_description",
+                    name: "any_name",
+                    username: "any_username",
+                    email: "any@valid.com",
+                    password: "14121241",
+                })
                 .expect(201);
         });
     });
@@ -30,10 +38,7 @@ describe("Profiles Routes", () => {
         });
 
         it("Should return 404 on profileId not found", async () => {
-            
-            await request(app)
-                .get(`/profiles/${new mongoose.Types.ObjectId()}`)
-                .expect(404);
+            await request(app).get(`/profiles/${new mongoose.Types.ObjectId()}`).expect(404);
         });
     });
 });

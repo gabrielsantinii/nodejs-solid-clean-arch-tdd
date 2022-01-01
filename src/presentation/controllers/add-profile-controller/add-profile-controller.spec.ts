@@ -1,4 +1,4 @@
-import { AddProfile, CheckProfileByEmail, CheckProfileByUsername } from "@/domain/usecases";
+import { AddAuth, AddProfile, CheckProfileByEmail, CheckProfileByUsername } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
 import { mockProfileModel, throwError } from "@/tests/domain/mocks";
@@ -30,19 +30,28 @@ class AddProfileSpy implements AddProfile {
     }
 }
 
+class AddAuthSpy implements AddAuth {
+    result: AddAuth.Result = undefined;
+    async perform(params: AddAuth.Params): Promise<AddAuth.Result> {
+        return this.result;
+    }
+}
+
 type SutType = {
     sut: AddProfileController;
     checkProfileByEmailSpy: CheckProfileByEmailSpy;
     checkProfileByUsernameSpy: CheckProfileByUsernameSpy;
     addProfileSpy: AddProfileSpy;
+    addAuthSpy: AddAuthSpy;
 };
 
 const makeSut = (): SutType => {
     const checkProfileByEmailSpy = new CheckProfileByEmailSpy();
     const checkProfileByUsernameSpy = new CheckProfileByUsernameSpy();
     const addProfileSpy = new AddProfileSpy();
-    const sut = new AddProfileController(checkProfileByEmailSpy, checkProfileByUsernameSpy, addProfileSpy);
-    return { sut, checkProfileByEmailSpy, checkProfileByUsernameSpy, addProfileSpy };
+    const addAuthSpy = new AddAuthSpy();
+    const sut = new AddProfileController(checkProfileByEmailSpy, checkProfileByUsernameSpy, addProfileSpy, addAuthSpy);
+    return { sut, checkProfileByEmailSpy, checkProfileByUsernameSpy, addProfileSpy, addAuthSpy };
 };
 
 describe("add-profile-controller.spec usecase", () => {

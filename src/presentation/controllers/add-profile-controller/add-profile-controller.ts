@@ -1,4 +1,4 @@
-import { AddProfile, CheckProfileByEmail, CheckProfileByUsername } from "@/domain/usecases";
+import { AddAuth, AddProfile, CheckProfileByEmail, CheckProfileByUsername } from "@/domain/usecases";
 import { CustomParamError } from "@/presentation/errors";
 import { httpResponse } from "@/presentation/helpers";
 import { Controller, HttpResponse } from "@/presentation/protocols";
@@ -7,7 +7,8 @@ export class AddProfileController implements Controller {
     constructor(
         private readonly checkProfileByEmail: CheckProfileByEmail,
         private readonly checkProfileByUsername: CheckProfileByUsername,
-        private readonly addProfile: AddProfile
+        private readonly addProfile: AddProfile,
+        private readonly addAuth: AddAuth
     ) {}
 
     async handle(request: AddProfileController.Request): Promise<AddProfileController.Result> {
@@ -23,6 +24,7 @@ export class AddProfileController implements Controller {
             }
 
             const createdProfile = await this.addProfile.perform(request);
+            await this.addAuth.perform({ email: request.email, password: request.password, profileId: createdProfile.id });
             return httpResponse.created(createdProfile);
         } catch (err) {
             return httpResponse.serverError(err as Error);

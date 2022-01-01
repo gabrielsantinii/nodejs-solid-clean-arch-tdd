@@ -3,6 +3,6 @@ export interface AddAuth {
 }
 
 export namespace AddAuth {
-    export type Params = { email: string; password: string };
-    export type Result = { authId: string };
+    export type Params = { email: string; password: string; profileId: string };
+    export type Result = void;
 }

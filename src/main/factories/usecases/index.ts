@@ -7,3 +7,4 @@ export * from "./load-profile-factory";
 export * from "./count-post-likes-factory";
 export * from "./count-profile-likes-factory";
 export * from "./load-posts-by-author-factory";
+export * from './add-auth-factory'

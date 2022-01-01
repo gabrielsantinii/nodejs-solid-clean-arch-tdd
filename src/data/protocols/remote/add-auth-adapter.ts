@@ -5,6 +5,6 @@ export interface AddAuthAdapter {
 }
 
 export namespace AddAuthAdapter {
-    export type Params = AddAuth.Params;
-    export type Result = AddAuth.Result;
+    export type Params = { email: string; password: string; authId: string };
+    export type Result = { authId: string };
 }
