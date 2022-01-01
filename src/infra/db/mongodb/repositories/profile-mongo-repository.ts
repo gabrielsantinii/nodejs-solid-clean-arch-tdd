@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ProfileModel } from "@/domain/models";
 import {
     AddProfileRepository,
     CheckProfileByEmailRepository,
@@ -6,7 +7,6 @@ import {
     LoadProfileRepository,
 } from "@/data/protocols/db";
 import { MongoHelper } from "@/infra/db/mongodb/helpers";
-import { ProfileModel } from "@/domain/models";
 
 export class ProfileMongoRepository
     implements LoadProfileRepository, AddProfileRepository, CheckProfileByUsernameRepository, CheckProfileByEmailRepository
@@ -21,7 +21,7 @@ export class ProfileMongoRepository
     }
 
     async add(params: AddProfileRepository.Params): Promise<AddProfileRepository.Result> {
-        const createdProfile = new this.collection(params);
+        const createdProfile = new this.collection({ ...params, ...this.generateDefaultValues() });
         await createdProfile.save();
         return createdProfile.toJSON() as any;
     }
@@ -32,5 +32,13 @@ export class ProfileMongoRepository
 
     async checkByEmail(params: CheckProfileByEmailRepository.Params): Promise<CheckProfileByEmailRepository.Result> {
         return this.collection.findOne(params) as any;
+    }
+
+    private generateDefaultValues(): Partial<ProfileModel> {
+        return {
+            avatarUrl: "",
+            backgroundUrl: "",
+            createdAt: new Date(),
+        };
     }
 }
