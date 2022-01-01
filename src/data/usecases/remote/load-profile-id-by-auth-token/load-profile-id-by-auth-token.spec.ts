@@ -20,13 +20,14 @@ class RemoteLoadProfileIdByAuthToken implements LoadProfileIdByAuthToken {
     constructor(private readonly loadProfileIdByAuthTokenAdapter: LoadProfileIdByAuthTokenAdapter) {}
 
     async perform(params: LoadProfileIdByAuthToken.Params): Promise<LoadProfileIdByAuthToken.Result> {
-        return { profileId: "any-profile-id" };
+        const profileByTokenResult = await this.loadProfileIdByAuthTokenAdapter.loadAuthIdByToken({ token: params.authToken });
+        return { profileId: profileByTokenResult.authId };
     }
 }
 
 describe("load-profile-id-by-auth-token.spec usecase", () => {
     it("should return profileId for valid auth-token.", async () => {
-        const loadProfileIdByAuthTokenAdapterSpy = new LoadProfileIdByAuthTokenAdapterSpy()
+        const loadProfileIdByAuthTokenAdapterSpy = new LoadProfileIdByAuthTokenAdapterSpy();
         const sut = new RemoteLoadProfileIdByAuthToken(loadProfileIdByAuthTokenAdapterSpy);
         const profileByAuthToken = await sut.perform({ authToken: "any_token" });
         expect(profileByAuthToken).toHaveProperty("profileId");
