@@ -4,6 +4,7 @@ export type PostModel = {
         id: string;
         name: string;
         username: string;
+        avatarUrl: string;
     };
     postedAt: Date;
     contentDescription: string;

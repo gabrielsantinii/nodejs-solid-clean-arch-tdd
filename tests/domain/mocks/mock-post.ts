@@ -9,5 +9,6 @@ export const mockPostModel = (): PostModel => ({
         id: faker.datatype.uuid(),
         name: faker.name.title(),
         username: faker.random.word(),
+        avatarUrl: faker.random.word(),
     },
 });
