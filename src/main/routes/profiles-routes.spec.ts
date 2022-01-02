@@ -2,14 +2,14 @@ import express from "express";
 import request from "supertest";
 import mongoose from "mongoose";
 import { setupApp, setupEnvironment, setupFirebase, setupMongoDb } from "@/main/config";
-let app: express.Application;
 import { ProfileModel } from "@/domain/models";
 import { FirebaseAuth } from "@/infra/remote";
-import { FirebaseHelper } from '@/tests/infra/remote'
+import { FirebaseHelper } from "@/tests/infra/remote";
 
-let createdProfile = {} as ProfileModel;
-const firebaseAuth = new FirebaseAuth();
-let bearerToken = "";
+let app: express.Application;
+let createdProfile: ProfileModel;
+let bearerToken: string;
+let firebaseAuth: FirebaseAuth;
 
 describe("Profiles Routes", () => {
     beforeAll(async () => {
@@ -17,6 +17,7 @@ describe("Profiles Routes", () => {
         await setupMongoDb();
         await setupFirebase();
         app = setupApp();
+        firebaseAuth = new FirebaseAuth();
         jest.setTimeout(15000);
     });
 
