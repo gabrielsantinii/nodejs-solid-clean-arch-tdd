@@ -1,27 +1,15 @@
 import express from "express";
 import request from "supertest";
 import mongoose from "mongoose";
-import axios from "axios";
-import { setupApp, setupEnvironment, environment, setupFirebase, setupMongoDb } from "@/main/config";
+import { setupApp, setupEnvironment, setupFirebase, setupMongoDb } from "@/main/config";
 let app: express.Application;
 import { ProfileModel } from "@/domain/models";
 import { FirebaseAuth } from "@/infra/remote";
+import { FirebaseHelper } from '@/tests/infra/remote'
 
 let createdProfile = {} as ProfileModel;
 const firebaseAuth = new FirebaseAuth();
 let bearerToken = "";
-
-const generateTokenId = async (customToken: string): Promise<{ tokenId: string }> => {
-    const { data } = await axios.request<{ idToken: string }>({
-        url: `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${environment.firebaseWebApiKey}`,
-        method: "post",
-        data: {
-            token: customToken,
-            returnSecureToken: true,
-        },
-    });
-    return { tokenId: data.idToken };
-};
 
 describe("Profiles Routes", () => {
     beforeAll(async () => {
@@ -54,7 +42,7 @@ describe("Profiles Routes", () => {
                 .expect(201);
             createdProfile = response.body;
             const credentials = await firebaseAuth.generateCustomToken({ authId: createdProfile.id });
-            const tokenResult = await generateTokenId(credentials.token);
+            const tokenResult = await FirebaseHelper.generateTokenId(credentials.token);
             bearerToken = tokenResult.tokenId;
         });
     });
