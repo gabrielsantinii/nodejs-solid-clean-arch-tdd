@@ -1,6 +1,8 @@
-import { PostModel } from "@/domain/models";
-import { mockPostModel } from "@/tests/domain/mocks";
 import faker from "faker";
+import { AddPostRepository } from "@/data/protocols/db";
+import { AddPost } from "@/domain/usecases";
+import { mockPostModel } from "@/tests/domain/mocks";
+import { DbAddPost } from "@/data/usecases/db";
 
 const mockAddPostParams = (): AddPost.Params => ({
     contentDescription: faker.lorem.lines(3),
@@ -12,15 +14,6 @@ const mockAddPostParams = (): AddPost.Params => ({
     },
 });
 
-interface AddPostRepository {
-    add: (params: AddPostRepository.Params) => Promise<AddPostRepository.Result>;
-}
-
-namespace AddPostRepository {
-    export type Params = AddPost.Params;
-    export type Result = AddPost.Result;
-}
-
 class AddPostRepositorySpy implements AddPostRepository {
     result: AddPostRepository.Result = mockPostModel();
     async add(params: AddPostRepository.Params): Promise<AddPostRepository.Result> {
@@ -28,32 +21,9 @@ class AddPostRepositorySpy implements AddPostRepository {
     }
 }
 
-export class AddPost {
-    constructor(private readonly addPostRepository: AddPostRepository) {}
-    
-    async perform(params: AddPost.Params): Promise<AddPost.Result> {
-        const savedPost = await this.addPostRepository.add(params)
-        if (!savedPost?.id) throw new Error('Could not add post')
-        return savedPost
-    }
-}
-
-export namespace AddPost {
-    export type Params = {
-        contentDescription: string;
-        postedBy: {
-            id: string;
-            name: string;
-            username: string;
-            avatarUrl: string;
-        };
-    };
-    export type Result = PostModel;
-}
-
 const makeSut = () => {
     const addPostRepositorySpy = new AddPostRepositorySpy();
-    const sut = new AddPost(addPostRepositorySpy);
+    const sut = new DbAddPost(addPostRepositorySpy);
     return { sut, addPostRepositorySpy };
 };
 
@@ -68,7 +38,7 @@ describe("add-post.spec usecase", () => {
         const { sut, addPostRepositorySpy } = makeSut();
         let error: Error;
         try {
-            addPostRepositorySpy.result = undefined
+            addPostRepositorySpy.result = undefined;
             await sut.perform(mockAddPostParams());
         } catch (err) {
             error = err;
