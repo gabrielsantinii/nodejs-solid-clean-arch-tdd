@@ -1,12 +1,12 @@
 import { AddProfile } from "@/domain/usecases";
 import { CompositeValidation } from "@/presentation/protocols";
-import { EmailFieldValidation, LengthFieldValidation, RequiredFieldValidation, UsernameFieldValidation } from "@/validation/validators";
+import { BulkValidation, EmailFieldValidation, LengthFieldValidation, UsernameFieldValidation } from "@/validation/validators";
 
 export class AddProfileValidation implements CompositeValidation<AddProfile.Params> {
     readonly fields: Array<keyof Partial<AddProfile.Params>> = ["name", "username", "email", "password"];
 
     validate(input: any): Error[] {
-        const requiredErrors = this.validateRequiredFields(input);
+        const requiredErrors = new BulkValidation(this.fields).validateRequired(input);
         if (requiredErrors.length) return requiredErrors;
 
         let invalidErrors = [];
@@ -21,16 +21,6 @@ export class AddProfileValidation implements CompositeValidation<AddProfile.Para
         if (usernameError) invalidErrors.push(usernameError);
 
         return invalidErrors;
-    }
-
-    private validateRequiredFields(input: any): Error[] {
-        const errors: Error[] = [];
-        this.fields.forEach((field) => {
-            const fieldError = new RequiredFieldValidation(field).validate(input);
-            if (fieldError) errors.push(fieldError);
-        });
-
-        return errors;
     }
 
     private validateLengthFields(input: any): Error[] {
