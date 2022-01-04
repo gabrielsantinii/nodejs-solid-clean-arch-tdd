@@ -1,15 +1,4 @@
-import { AddPostController } from "@/presentation/controllers";
-import { CompositeValidation } from "@/presentation/protocols";
-import { BulkValidation } from "@/validation/validators";
-
-class AddPostValidation implements CompositeValidation<AddPostController.Request> {
-    readonly fields: Array<keyof AddPostController.Request> = ["authorId", "contentDescription"];
-
-    validate(input: any): Error[] {
-        const requiredErrors = new BulkValidation(this.fields).validateRequired(input);
-        return requiredErrors;
-    }
-}
+import { AddPostValidation } from "./add-post-validation";
 
 describe("add-post-validation.spec usecase", () => {
     it("should return errors with length 1 for authorId filled", async () => {

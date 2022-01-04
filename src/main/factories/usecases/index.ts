@@ -9,3 +9,4 @@ export * from "./count-profile-likes-factory";
 export * from "./load-posts-by-author-factory";
 export * from './add-auth-factory'
 export * from './load-profile-id-by-auth-token-factory'
+export * from './add-post-factory'
